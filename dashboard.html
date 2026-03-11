@@ -537,25 +537,21 @@ async function loadCrypto() {
 
 // ===================== COMMODITIES =====================
 async function loadCommodities() {
-  const commodities = [
-    {name:'Brent Crude Oil', ticker:'BZ=F', unit:'USD/barrel', icon:'🛢️', relevance:'Nigeria exports 1.5M bbl/day'},
-    {name:'Gold', ticker:'GC=F', unit:'USD/oz', icon:'🥇', relevance:'Ghana top 10 global producer'},
-    {name:'Cocoa', ticker:'CC=F', unit:'USD/tonne', icon:'🍫', relevance:'Ivory Coast #1 global producer'},
-    {name:'Natural Gas', ticker:'NG=F', unit:'USD/MMBtu', icon:'🔥', relevance:'Nigeria 9th largest reserves'},
-    {name:'Wheat', ticker:'W=F', unit:'USD/bushel', icon:'🌾', relevance:'Key import for food security'},
-  ];
+  const icons = {'Brent Crude Oil':'🛢️','Gold':'🥇','Cocoa':'🍫','Natural Gas':'🔥','Wheat':'🌾'};
+  const relevance = {'Brent Crude Oil':'Nigeria exports 1.5M bbl/day','Gold':'Ghana top 10 global producer','Cocoa':'Ivory Coast #1 global producer','Natural Gas':'Nigeria 9th largest reserves','Wheat':'Key import for food security'};
+  const units = {'Brent Crude Oil':'USD/barrel','Gold':'USD/oz','Cocoa':'USD/tonne','Natural Gas':'USD/MMBtu','Wheat':'USD/bushel'};
   try {
-    const results = await Promise.all(commodities.map(async c => {
-      try {
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/' + c.ticker)}`;
-        const res = await fetch(proxyUrl);
-        const data = await res.json();
-        const price = data.chart.result[0].meta.regularMarketPrice;
-        const prev = data.chart.result[0].meta.chartPreviousClose;
-        const chg = (((price-prev)/prev)*100).toFixed(2);
-        return {...c, price: price.toFixed(2), chg};
-      } catch { return {...c, price:'—', chg:'0'}; }
-    }));
+    const res = await fetch('commodities_data.csv');
+    const text = await res.text();
+    const lines = text.trim().split('
+').slice(1);
+    const results = lines.map(line => {
+      const cols = line.split(',');
+      const name = cols[0];
+      const price = parseFloat(cols[2]).toFixed(2);
+      const chg = parseFloat(cols[4]).toFixed(2);
+      return {name, unit: units[name]||'', icon: icons[name]||'📊', relevance: relevance[name]||'', price, chg};
+    });
     commodityData = results;
     if (results[0].price !== '—') {
       document.getElementById('oil-price').textContent = '$'+results[0].price;
