@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AfriTerminal — African Markets Intelligence</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://unpkg.com/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:#0a0e1a;color:#e0e6f0;font-family:-apple-system,'Courier New',monospace;overflow-x:hidden}
@@ -657,12 +658,41 @@ function showStockDetail(name){
   document.getElementById('detail-low').textContent='₦'+(s.price*0.75).toFixed(2);
   document.getElementById('detail-vol').textContent=(Math.random()*5+0.5).toFixed(1)+'M';
   document.getElementById('detail-cap').textContent='₦'+(s.price*(Math.random()*800+200)).toFixed(0)+'M';
-  if(stockChartInst) stockChartInst.destroy();
-  const ctx=document.getElementById('stockChart').getContext('2d');
-  const pts=Array.from({length:30},()=>+(s.price*(0.85+Math.random()*0.3)).toFixed(2));
-  pts[29]=s.price;
-  const lbls=Array.from({length:30},(_,i)=>{const d=new Date();d.setDate(d.getDate()-29+i);return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});});
-  stockChartInst=new Chart(ctx,{type:'line',data:{labels:lbls,datasets:[{data:pts,borderColor:'#00d4aa',backgroundColor:'rgba(0,212,170,0.08)',fill:true,tension:0.4,pointRadius:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}},y:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}}}}});
+  // TradingView Candlestick Chart
+  const chartDiv = document.getElementById('stockChart').parentElement;
+  chartDiv.innerHTML = '<div id="tv-chart" style="height:190px"></div>';
+  if(stockChartInst) { stockChartInst.remove(); stockChartInst=null; }
+  stockChartInst = LightweightCharts.createChart(document.getElementById('tv-chart'), {
+    width: chartDiv.offsetWidth - 28,
+    height: 190,
+    layout:{background:{color:'#0d1224'},textColor:'#c0cce0'},
+    grid:{vertLines:{color:'#1e3a5f'},horzLines:{color:'#1e3a5f'}},
+    rightPriceScale:{borderColor:'#1e3a5f'},
+    timeScale:{borderColor:'#1e3a5f',timeVisible:true},
+  });
+  const candleSeries = stockChartInst.addCandlestickSeries({
+    upColor:'#00ff88',downColor:'#ff4444',
+    borderUpColor:'#00ff88',borderDownColor:'#ff4444',
+    wickUpColor:'#00ff88',wickDownColor:'#ff4444',
+  });
+  // Generate 30 days of realistic OHLCV data
+  const candleData = [];
+  let price = s.price * 0.85;
+  for(let i=29;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    if(d.getDay()===0||d.getDay()===6) continue;
+    const open = price;
+    const change = (Math.random()-0.48)*price*0.025;
+    const close = Math.max(open+change, open*0.95);
+    const high = Math.max(open,close)*(1+Math.random()*0.01);
+    const low = Math.min(open,close)*(1-Math.random()*0.01);
+    candleData.push({time:d.toISOString().split('T')[0],open:+open.toFixed(2),high:+high.toFixed(2),low:+low.toFixed(2),close:+close.toFixed(2)});
+    price = close;
+  }
+  // Force last candle to match real price
+  if(candleData.length>0) candleData[candleData.length-1].close=s.price;
+  candleSeries.setData(candleData);
+  stockChartInst.timeScale().fitContent();
   document.querySelectorAll('[id^="tab-"],[id^="view-"]').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-stock').classList.add('active');
   window.scrollTo(0,0);

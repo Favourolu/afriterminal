@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://unpkg.com/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.js"></script>
+</head>
+<body style="background:#0a0e1a;margin:0;padding:20px">
+<h2 style="color:#00d4aa;font-family:monospace">⚡ AfriTerminal — Dangote Cement</h2>
+<div id="chart"></div>
+<script>
+const chart = LightweightCharts.createChart(document.getElementById('chart'), {
+  width: window.innerWidth - 40,
+  height: 400,
+  layout:{background:{color:'#0d1224'},textColor:'#c0cce0'},
+  grid:{vertLines:{color:'#1e3a5f'},horzLines:{color:'#1e3a5f'}},
+});
+const candle = chart.addCandlestickSeries({
+  upColor:'#00ff88', downColor:'#ff4444',
+  borderUpColor:'#00ff88', borderDownColor:'#ff4444',
+  wickUpColor:'#00ff88', wickDownColor:'#ff4444',
+});
+candle.setData([
+  {time:'2026-02-01',open:750,high:780,low:740,close:770},
+  {time:'2026-02-05',open:770,high:790,low:760,close:785},
+  {time:'2026-02-10',open:785,high:800,low:775,close:795},
+  {time:'2026-02-15',open:795,high:815,low:788,close:808},
+  {time:'2026-02-20',open:808,high:820,low:800,close:810},
+  {time:'2026-02-25',open:810,high:825,low:805,close:818},
+  {time:'2026-03-01',open:818,high:830,low:808,close:810},
+  {time:'2026-03-05',open:810,high:822,low:800,close:815},
+  {time:'2026-03-10',open:815,high:820,low:805,close:810},
+]);
+chart.timeScale().fitContent();
+</script>
+</body>
+</html>
