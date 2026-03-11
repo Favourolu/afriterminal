@@ -663,10 +663,9 @@ function showStockDetail(name){
   const canvas = document.getElementById('stockChart');
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
-  const pts=Array.from({length:30},(_,i)=>{
-    if(i===0) return +(s.price*0.85).toFixed(2);
-    return +(pts[i-1]*(0.97+Math.random()*0.06)).toFixed(2);
-  });
+  const pts=[];
+  let p=s.price*0.85;
+  for(let i=0;i<30;i++){p=+(p*(0.97+Math.random()*0.06)).toFixed(2);pts.push(p);}
   pts[29]=s.price;
   const lbls=Array.from({length:30},(_,i)=>{const d=new Date();d.setDate(d.getDate()-29+i);return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});});
   stockChartInst=new Chart(ctx,{type:'line',data:{labels:lbls,datasets:[{data:pts,borderColor:'#00d4aa',backgroundColor:'rgba(0,212,170,0.08)',fill:true,tension:0.4,pointRadius:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}},y:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}}}}});
