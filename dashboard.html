@@ -547,9 +547,8 @@ async function loadCommodities() {
   try {
     const results = await Promise.all(commodities.map(async c => {
       try {
-        const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${c.ticker}`, {
-          headers:{'User-Agent':'Mozilla/5.0'}
-        });
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/' + c.ticker)}`;
+        const res = await fetch(proxyUrl);
         const data = await res.json();
         const price = data.chart.result[0].meta.regularMarketPrice;
         const prev = data.chart.result[0].meta.chartPreviousClose;
