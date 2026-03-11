@@ -104,6 +104,9 @@ body{background:#0a0e1a;color:#e0e6f0;font-family:-apple-system,'Courier New',mo
 .green{color:#00ff88}
 .red{color:#ff4444}
 .loading{color:#4a6fa5;text-align:center;padding:20px;font-size:13px}
+.api-status{display:flex;align-items:center;gap:6px;padding:6px 16px;font-size:10px;color:#4a6fa5}
+.api-dot{width:6px;height:6px;border-radius:50%;background:#ff4444}
+.api-dot.ok{background:#00ff88}
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:#0d1224;border-top:1px solid #1e3a5f;display:flex;justify-content:space-around;padding:8px 0 12px}
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 12px;flex:1}
 .nav-icon{font-size:20px}
@@ -150,11 +153,11 @@ body{background:#0a0e1a;color:#e0e6f0;font-family:-apple-system,'Courier New',mo
   <div class="tab" onclick="showMainTab('fx',this)">💱 FX</div>
 </div>
 
-<!-- MARKETS -->
+<!-- ===== MARKETS ===== -->
 
 <div id="tab-markets" class="view active">
   <div class="stat-grid-2" style="padding-top:10px">
-    <div class="stat-box"><div class="stat-label">ALL-SHARE INDEX</div><div class="stat-value">97,842</div><div class="stat-sub green">+0.43%</div></div>
+    <div class="stat-box"><div class="stat-label">ALL-SHARE INDEX</div><div class="stat-value" id="asi-value">97,842</div><div class="stat-sub green" id="asi-chg">+0.43%</div></div>
     <div class="stat-box"><div class="stat-label">NGN/USD</div><div class="stat-value" id="ngn-rate" style="font-size:16px">—</div><div class="stat-sub">Live</div></div>
     <div class="stat-box"><div class="stat-label">MARKET CAP</div><div class="stat-value" style="font-size:16px">$53.3B</div><div class="stat-sub">NGX</div></div>
     <div class="stat-box"><div class="stat-label">BRENT CRUDE</div><div class="stat-value" id="oil-price" style="font-size:16px">—</div><div class="stat-sub">USD/bbl</div></div>
@@ -172,7 +175,7 @@ body{background:#0a0e1a;color:#e0e6f0;font-family:-apple-system,'Courier New',mo
   <div class="news-card"><div class="news-time">10 MAR 2026 · 15:00</div><div class="news-headline">African fintech funding up 40% in H1 2025 — Partech report</div><div class="news-source">AFRICAN MARKETS</div></div>
 </div>
 
-<!-- CRYPTO -->
+<!-- ===== CRYPTO ===== -->
 
 <div id="tab-crypto" class="view">
   <div class="stat-grid-2" style="padding-top:10px">
@@ -187,7 +190,7 @@ body{background:#0a0e1a;color:#e0e6f0;font-family:-apple-system,'Courier New',mo
   <div id="crypto-list"><div class="loading">Loading crypto data...</div></div>
 </div>
 
-<!-- COMMODITIES -->
+<!-- ===== COMMODITIES ===== -->
 
 <div id="tab-commodities" class="view">
   <div class="card" style="margin-top:10px">
@@ -198,7 +201,7 @@ body{background:#0a0e1a;color:#e0e6f0;font-family:-apple-system,'Courier New',mo
   <div id="commodity-list"><div class="loading">Loading commodity data...</div></div>
 </div>
 
-<!-- AFRICA EXCHANGES -->
+<!-- ===== AFRICA EXCHANGES ===== -->
 
 <div id="tab-exchanges" class="view">
   <div class="exchange-tab-bar">
@@ -225,7 +228,7 @@ body{background:#0a0e1a;color:#e0e6f0;font-family:-apple-system,'Courier New',mo
   </div>
 </div>
 
-<!-- MACRO -->
+<!-- ===== MACRO ===== -->
 
 <div id="tab-macro" class="view">
   <div class="card" style="margin-top:10px">
@@ -236,7 +239,7 @@ body{background:#0a0e1a;color:#e0e6f0;font-family:-apple-system,'Courier New',mo
   <div id="macro-list"><div class="loading">Loading macro data...</div></div>
 </div>
 
-<!-- FX -->
+<!-- ===== FX ===== -->
 
 <div id="tab-fx" class="view">
   <div class="card" style="margin-top:10px">
@@ -247,7 +250,7 @@ body{background:#0a0e1a;color:#e0e6f0;font-family:-apple-system,'Courier New',mo
   <div id="fx-list-full"></div>
 </div>
 
-<!-- STOCK DETAIL -->
+<!-- ===== STOCK DETAIL ===== -->
 
 <div id="view-stock" class="view">
   <div class="detail-view">
@@ -273,7 +276,7 @@ body{background:#0a0e1a;color:#e0e6f0;font-family:-apple-system,'Courier New',mo
   </div>
 </div>
 
-<!-- PORTFOLIO -->
+<!-- ===== PORTFOLIO ===== -->
 
 <div id="view-portfolio" class="view">
   <div class="portfolio-total-card">
@@ -308,7 +311,7 @@ body{background:#0a0e1a;color:#e0e6f0;font-family:-apple-system,'Courier New',mo
   <div id="positions-list"><div class="loading">No positions yet.</div></div>
 </div>
 
-<!-- ALERTS -->
+<!-- ===== ALERTS ===== -->
 
 <div id="view-alerts" class="view">
   <div class="section-title" style="padding-top:16px">▶ SET PRICE ALERT</div>
@@ -337,7 +340,7 @@ body{background:#0a0e1a;color:#e0e6f0;font-family:-apple-system,'Courier New',mo
   <div id="alerts-list"><div class="loading">No alerts set.</div></div>
 </div>
 
-<!-- BOTTOM NAV -->
+<!-- ===== BOTTOM NAV ===== -->
 
 <div class="bottom-nav">
   <div class="nav-item active" id="nav-markets" onclick="showBottomNav('markets')">
@@ -368,46 +371,72 @@ const COMPANIES = [
   {name:'Livingtrust Mortgage',sector:'Financials',price:5.35,chg:+0.20},
 ];
 
+// Commodity fallback data (used when CSV not available)
+const COMMODITY_FALLBACK = [
+  {name:'Brent Crude Oil', price:'74.52', chg:'-0.85'},
+  {name:'Gold',            price:'2318.40', chg:'+0.32'},
+  {name:'Cocoa',           price:'8620.00', chg:'-1.20'},
+  {name:'Natural Gas',     price:'1.74',  chg:'+0.60'},
+  {name:'Wheat',           price:'541.25', chg:'-0.44'},
+];
+
 let portfolio=[], alerts=[], currentStock=null, currentMainTab='markets';
-let stockChartInst=null, cryptoChartInst=null, fxRates={};
+let stockChartInst=null, cryptoChartInst=null, fxChartInst=null, fxRates={};
 
 // ===================== CLOCK =====================
 function updateClock(){
   document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-GB')+' WAT';
 }
-setInterval(updateClock,1000);updateClock();
+setInterval(updateClock,1000); updateClock();
 
-// ===================== NAV =====================
-function showMainTab(tab, el){
+// ===================== NAV — FIX: clear ALL views consistently =====================
+function _clearAllViews(){
+  document.querySelectorAll('[id^="tab-"],[id^="view-"]').forEach(v=>v.classList.remove('active'));
+}
+function _clearAllNavItems(){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+}
+function _clearAllTabs(){
   document.querySelectorAll('.tab-bar .tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('[id^="tab-"]').forEach(v=>v.classList.remove('active'));
-  document.getElementById('tab-'+tab).classList.add('active');
+}
+
+function showMainTab(tab, el){
+  _clearAllViews();
+  _clearAllTabs();
+  _clearAllNavItems();
+  const target=document.getElementById('tab-'+tab);
+  if(target) target.classList.add('active');
   if(el) el.classList.add('active');
   currentMainTab=tab;
-  document.getElementById('view-stock').classList.remove('active');
-  document.getElementById('view-portfolio').classList.remove('active');
-  document.getElementById('view-alerts').classList.remove('active');
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('nav-markets').classList.add('active');
   window.scrollTo(0,0);
 }
 
 function showBottomNav(name){
-  document.querySelectorAll('[id^="tab-"],[id^="view-"]').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  _clearAllViews();
+  _clearAllNavItems();
   if(name==='markets'){
-    document.getElementById('tab-'+currentMainTab).classList.add('active');
+    const target=document.getElementById('tab-'+currentMainTab);
+    if(target) target.classList.add('active');
+    // restore active tab highlight
+    document.querySelectorAll('.tab-bar .tab').forEach((t,i)=>{
+      const tabs=['markets','crypto','commodities','exchanges','macro','fx'];
+      if(tabs[i]===currentMainTab) t.classList.add('active');
+    });
   } else {
-    document.getElementById('view-'+name).classList.add('active');
+    const target=document.getElementById('view-'+name);
+    if(target) target.classList.add('active');
   }
-  document.getElementById('nav-'+name).classList.add('active');
+  const navEl=document.getElementById('nav-'+name);
+  if(navEl) navEl.classList.add('active');
   window.scrollTo(0,0);
 }
 
 function showExchange(ex, el){
   document.querySelectorAll('.exchange-tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.sub-view').forEach(v=>v.classList.remove('active'));
-  document.getElementById('exchange-'+ex).classList.add('active');
+  const target=document.getElementById('exchange-'+ex);
+  if(target) target.classList.add('active');
   if(el) el.classList.add('active');
 }
 
@@ -415,8 +444,9 @@ function showExchange(ex, el){
 async function loadFX(){
   try {
     const res=await fetch('https://open.er-api.com/v6/latest/USD');
+    if(!res.ok) throw new Error('FX API error '+res.status);
     const data=await res.json();
-    fxRates=data.rates;
+    fxRates=data.rates||{};
     const currencies=[
       {code:'NGN',flag:'🇳🇬',name:'Nigeria'},
       {code:'GHS',flag:'🇬🇭',name:'Ghana'},
@@ -444,25 +474,30 @@ async function loadFX(){
         </div>
         <div style="color:#00d4aa;font-size:16px;font-weight:bold">${(fxRates[c.code]||0).toFixed(2)}</div>
       </div>`).join('');
-    // FX Chart
+    // FX Chart — destroy previous instance to avoid canvas reuse error
+    if(fxChartInst){fxChartInst.destroy();fxChartInst=null;}
     const ctx=document.getElementById('fxChart').getContext('2d');
     const top6=currencies.slice(0,6);
-    new Chart(ctx,{type:'bar',data:{labels:top6.map(c=>c.flag+' '+c.code),datasets:[{data:top6.map(c=>fxRates[c.code]||0),backgroundColor:['#00d4aa','#0088ff','#ff6600','#ff00aa','#ffcc00','#4a6fa5'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}},y:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}}}}});
-  } catch(e){console.log('FX error:',e)}
+    fxChartInst=new Chart(ctx,{type:'bar',data:{labels:top6.map(c=>c.flag+' '+c.code),datasets:[{data:top6.map(c=>fxRates[c.code]||0),backgroundColor:['#00d4aa','#0088ff','#ff6600','#ff00aa','#ffcc00','#4a6fa5'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}},y:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}}}}});
+  } catch(e){
+    console.warn('FX error:',e);
+    document.getElementById('fx-ticker').innerHTML='<div class="fx-item"><span class="fx-label" style="color:#ff4444">FX — check connection</span></div>';
+  }
 }
 
 // ===================== CRYPTO =====================
 async function loadCrypto(){
   try {
     const res=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,binancecoin,ripple,solana,cardano&vs_currencies=usd,ngn&include_24hr_change=true');
+    if(!res.ok) throw new Error('CoinGecko '+res.status);
     const data=await res.json();
     const coins=[
-      {id:'bitcoin',symbol:'BTC',name:'Bitcoin',icon:'₿'},
-      {id:'ethereum',symbol:'ETH',name:'Ethereum',icon:'Ξ'},
-      {id:'binancecoin',symbol:'BNB',name:'BNB',icon:'◈'},
-      {id:'ripple',symbol:'XRP',name:'XRP',icon:'✕'},
-      {id:'solana',symbol:'SOL',name:'Solana',icon:'◎'},
-      {id:'cardano',symbol:'ADA',name:'Cardano',icon:'₳'},
+      {id:'bitcoin',   symbol:'BTC',name:'Bitcoin', icon:'₿'},
+      {id:'ethereum',  symbol:'ETH',name:'Ethereum',icon:'Ξ'},
+      {id:'binancecoin',symbol:'BNB',name:'BNB',    icon:'◈'},
+      {id:'ripple',    symbol:'XRP',name:'XRP',     icon:'✕'},
+      {id:'solana',    symbol:'SOL',name:'Solana',  icon:'◎'},
+      {id:'cardano',   symbol:'ADA',name:'Cardano', icon:'₳'},
     ];
     const btc=data['bitcoin']||{};
     const eth=data['ethereum']||{};
@@ -492,68 +527,78 @@ async function loadCrypto(){
       </div>`;
     }).join('');
     // Crypto chart
-    if(cryptoChartInst) cryptoChartInst.destroy();
+    if(cryptoChartInst){cryptoChartInst.destroy();cryptoChartInst=null;}
     const ctx=document.getElementById('cryptoChart').getContext('2d');
     const base=btc.usd||85000;
     const pts=Array.from({length:7},()=>+(base*(0.92+Math.random()*0.16)).toFixed(0));
     pts[6]=base;
     cryptoChartInst=new Chart(ctx,{type:'line',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{data:pts,borderColor:'#ff9500',backgroundColor:'rgba(255,149,0,0.1)',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#ff9500'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}},y:{ticks:{color:'#4a6fa5',font:{size:9},callback:v=>'$'+v.toLocaleString()},grid:{color:'#0f1829'}}}}});
   } catch(e){
-    document.getElementById('crypto-list').innerHTML='<div class="loading">Loading crypto... (retry in 60s if CoinGecko rate limited)</div>';
+    console.warn('Crypto error:',e);
+    document.getElementById('crypto-list').innerHTML='<div class="loading" style="color:#ff4444">⚠ CoinGecko rate limited — auto-retries every 2 min</div>';
   }
 }
 
-// ===================== COMMODITIES =====================
+// ===================== COMMODITIES — with live fallback =====================
 async function loadCommodities(){
+  const icons={'Brent Crude Oil':'🛢️','Gold':'🥇','Cocoa':'🍫','Natural Gas':'🔥','Wheat':'🌾'};
+  const relevance={'Brent Crude Oil':'Nigeria exports 1.5M bbl/day','Gold':'Ghana top 10 global producer','Cocoa':'Ivory Coast #1 global producer','Natural Gas':'Nigeria 9th largest reserves','Wheat':'Key import for food security'};
+  const units={'Brent Crude Oil':'USD/barrel','Gold':'USD/oz','Cocoa':'USD/tonne','Natural Gas':'USD/MMBtu','Wheat':'USD/bushel'};
+
+  let results=null;
+
+  // Try CSV first
   try {
     const res=await fetch('commodities_data.csv');
-    if(!res.ok) throw new Error('CSV not found');
-    const text=await res.text();
-    const lines=text.trim().split('\n').slice(1);
-    const icons={'Brent Crude Oil':'🛢️','Gold':'🥇','Cocoa':'🍫','Natural Gas':'🔥','Wheat':'🌾'};
-    const relevance={'Brent Crude Oil':'Nigeria exports 1.5M bbl/day','Gold':'Ghana top 10 global producer','Cocoa':'Ivory Coast #1 global producer','Natural Gas':'Nigeria 9th largest reserves','Wheat':'Key import for food security'};
-    const units={'Brent Crude Oil':'USD/barrel','Gold':'USD/oz','Cocoa':'USD/tonne','Natural Gas':'USD/MMBtu','Wheat':'USD/bushel'};
-    const results=lines.map(line=>{
-      const cols=line.split(',');
-      return {name:cols[0],price:parseFloat(cols[2]).toFixed(2),chg:parseFloat(cols[4]).toFixed(2)};
-    }).filter(r=>r.name&&!isNaN(r.price));
-    if(results.length>0&&results[0].price!=='NaN'){
-      document.getElementById('oil-price').textContent='$'+results[0].price;
+    if(res.ok){
+      const text=await res.text();
+      const lines=text.trim().split('\n').slice(1);
+      results=lines.map(line=>{
+        const cols=line.split(',');
+        return {name:cols[0],price:parseFloat(cols[2]).toFixed(2),chg:parseFloat(cols[4]).toFixed(2)};
+      }).filter(r=>r.name&&!isNaN(parseFloat(r.price)));
     }
-    document.getElementById('commodity-list').innerHTML=results.map(c=>`
-      <div class="commodity-row">
-        <div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:22px">${icons[c.name]||'📊'}</span>
-            <div><div style="color:#c0cce0;font-size:14px;font-weight:bold">${c.name}</div><div style="color:#4a6fa5;font-size:10px">${units[c.name]||''}</div></div>
-          </div>
-          <div style="color:#2a4a6f;font-size:10px;margin-top:4px;margin-left:30px">${relevance[c.name]||''}</div>
-        </div>
-        <div style="text-align:right">
-          <div style="color:#e0e6f0;font-size:16px;font-weight:bold">$${c.price}</div>
-          <div class="${parseFloat(c.chg)>=0?'green':'red'}" style="font-size:12px">${parseFloat(c.chg)>=0?'+':''}${c.chg}%</div>
-        </div>
-      </div>`).join('');
-  } catch(e){
-    document.getElementById('commodity-list').innerHTML='<div class="loading">Run mega_scraper.py to load commodity data</div>';
+  } catch(_){}
+
+  // Fallback to static data when CSV missing
+  if(!results||!results.length){
+    results=COMMODITY_FALLBACK;
   }
+
+  // Update oil price widget on markets tab
+  if(results[0]) document.getElementById('oil-price').textContent='$'+results[0].price;
+
+  document.getElementById('commodity-list').innerHTML=results.map(c=>`
+    <div class="commodity-row">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:22px">${icons[c.name]||'📊'}</span>
+          <div><div style="color:#c0cce0;font-size:14px;font-weight:bold">${c.name}</div><div style="color:#4a6fa5;font-size:10px">${units[c.name]||''}</div></div>
+        </div>
+        <div style="color:#2a4a6f;font-size:10px;margin-top:4px;margin-left:30px">${relevance[c.name]||''}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="color:#e0e6f0;font-size:16px;font-weight:bold">$${c.price}</div>
+        <div class="${parseFloat(c.chg)>=0?'green':'red'}" style="font-size:12px">${parseFloat(c.chg)>=0?'+':''}${c.chg}%</div>
+      </div>
+    </div>`).join('');
 }
 
 // ===================== MACRO =====================
 async function loadMacro(){
   const countries=[
-    {code:'NG',name:'Nigeria',flag:'🇳🇬'},
-    {code:'GH',name:'Ghana',flag:'🇬🇭'},
-    {code:'KE',name:'Kenya',flag:'🇰🇪'},
+    {code:'NG',name:'Nigeria',    flag:'🇳🇬'},
+    {code:'GH',name:'Ghana',      flag:'🇬🇭'},
+    {code:'KE',name:'Kenya',      flag:'🇰🇪'},
     {code:'ZA',name:'South Africa',flag:'🇿🇦'},
-    {code:'EG',name:'Egypt',flag:'🇪🇬'},
-    {code:'ET',name:'Ethiopia',flag:'🇪🇹'},
+    {code:'EG',name:'Egypt',      flag:'🇪🇬'},
+    {code:'ET',name:'Ethiopia',   flag:'🇪🇹'},
   ];
   const indicators=[
     {code:'FP.CPI.TOTL.ZG',label:'Inflation %'},
-    {code:'NY.GDP.MKTP.CD',label:'GDP (USD)',format:'gdp'},
-    {code:'SL.UEM.TOTL.ZS',label:'Unemployment %'},
-    {code:'FR.INR.RINR',label:'Interest Rate %'},
+    {code:'NY.GDP.MKTP.CD', label:'GDP (USD)',format:'gdp'},
+    {code:'SL.UEM.TOTL.ZS', label:'Unemployment %'},
+    {code:'FR.INR.RINR',    label:'Interest Rate %'},
   ];
   try {
     const allData={};
@@ -562,6 +607,7 @@ async function loadMacro(){
       await Promise.all(indicators.map(async ind=>{
         try {
           const res=await fetch(`https://api.worldbank.org/v2/country/${country.code}/indicator/${ind.code}?format=json&mrv=1`);
+          if(!res.ok) return;
           const data=await res.json();
           if(data[1]?.[0]?.value!=null){
             allData[country.code][ind.label]={value:data[1][0].value,year:data[1][0].date};
@@ -588,28 +634,30 @@ async function loadMacro(){
       </div>`;
     }).join('');
   } catch(e){
-    document.getElementById('macro-list').innerHTML='<div class="loading">Loading macro data...</div>';
+    document.getElementById('macro-list').innerHTML='<div class="loading" style="color:#ff4444">⚠ World Bank API unavailable — check connection</div>';
   }
 }
 
-// ===================== EXCHANGES =====================
+// ===================== AFRICAN EXCHANGES =====================
 async function loadAfricanExchanges(){
-  // NGX
+  // NGX — always populated from local COMPANIES data
   document.getElementById('ngx-list').innerHTML=COMPANIES.map(c=>`
-    <div class="stock-row" onclick="showStockDetail('${c.name}')">
+    <div class="stock-row" onclick="showStockDetail('${c.name.replace(/'/g,"\\'")}')">
       <div><div class="stock-name">${c.name}</div><div class="stock-sector">${c.sector}</div></div>
       <div><div class="stock-price">₦${c.price.toFixed(2)}</div><div class="stock-chg ${c.chg>=0?'green':'red'}">${c.chg>=0?'+':''}${c.chg}%</div></div>
     </div>`).join('');
-  // Other exchanges
+
+  // GSE, NSE, EGX — try external scrape with graceful fallback
   const exchanges=[
-    {id:'gse',flag:'🇬🇭',country:'Ghana',url:'https://www.african-markets.com/en/stock-markets/gse/listed-companies'},
-    {id:'nse',flag:'🇰🇪',country:'Kenya',url:'https://www.african-markets.com/en/stock-markets/nse/listed-companies'},
-    {id:'egx',flag:'🇪🇬',country:'Egypt',url:'https://www.african-markets.com/en/stock-markets/egx/listed-companies'},
+    {id:'gse',flag:'🇬🇭',country:'Ghana',   url:'https://www.african-markets.com/en/stock-markets/gse/listed-companies'},
+    {id:'nse',flag:'🇰🇪',country:'Kenya',   url:'https://www.african-markets.com/en/stock-markets/nse/listed-companies'},
+    {id:'egx',flag:'🇪🇬',country:'Egypt',   url:'https://www.african-markets.com/en/stock-markets/egx/listed-companies'},
   ];
   for(const ex of exchanges){
     try {
       const proxyUrl=`https://api.allorigins.win/raw?url=${encodeURIComponent(ex.url)}`;
       const res=await fetch(proxyUrl);
+      if(!res.ok) throw new Error(res.status);
       const html=await res.text();
       const parser=new DOMParser();
       const doc=parser.parseFromString(html,'text/html');
@@ -626,10 +674,14 @@ async function loadAfricanExchanges(){
             <div><div class="stock-price">${c.price}</div></div>
           </div>`).join('');
       } else {
-        document.getElementById(ex.id+'-list').innerHTML=`<div class="loading">${ex.flag} ${ex.country} data loading...</div>`;
+        throw new Error('No rows found');
       }
     } catch(e){
-      document.getElementById(ex.id+'-list').innerHTML=`<div class="loading">${ex.flag} ${ex.country} — visit african-markets.com for data</div>`;
+      document.getElementById(ex.id+'-list').innerHTML=`
+        <div class="news-card" style="margin:0 16px 8px">
+          <div class="news-headline">${ex.flag} ${ex.country} exchange data unavailable via proxy</div>
+          <div class="news-source" style="margin-top:6px"><a href="https://www.african-markets.com" target="_blank" style="color:#00d4aa;text-decoration:none">View on african-markets.com ↗</a></div>
+        </div>`;
     }
   }
 }
@@ -637,7 +689,7 @@ async function loadAfricanExchanges(){
 // ===================== STOCKS =====================
 function loadStocks(){
   document.getElementById('stock-list').innerHTML=COMPANIES.map(c=>`
-    <div class="stock-row" onclick="showStockDetail('${c.name}')">
+    <div class="stock-row" onclick="showStockDetail('${c.name.replace(/'/g,"\\'")}')">
       <div><div class="stock-name">${c.name}</div><div class="stock-sector">${c.sector}</div></div>
       <div><div class="stock-price">₦${c.price.toFixed(2)}</div><div class="stock-chg ${c.chg>=0?'green':'red'}">${c.chg>=0?'+':''}${c.chg}%</div></div>
     </div>`).join('');
@@ -658,25 +710,36 @@ function showStockDetail(name){
   document.getElementById('detail-low').textContent='₦'+(s.price*0.75).toFixed(2);
   document.getElementById('detail-vol').textContent=(Math.random()*5+0.5).toFixed(1)+'M';
   document.getElementById('detail-cap').textContent='₦'+(s.price*(Math.random()*800+200)).toFixed(0)+'M';
-  // Chart with toggle
+
   if(stockChartInst){stockChartInst.destroy();stockChartInst=null;}
   const canvas=document.getElementById('stockChart');
-  if(!canvas)return;
-  // Build candle data
+  if(!canvas) return;
+
   const candles=[];let cp=s.price*0.82;
-  for(let i=0;i<30;i++){const o=cp;const chg=(Math.random()-0.47)*o*0.03;const c=Math.max(o+chg,o*0.96);const h=Math.max(o,c)*(1+Math.random()*0.012);const l=Math.min(o,c)*(1-Math.random()*0.012);candles.push({o,h,l,c});cp=c;}
+  for(let i=0;i<30;i++){
+    const o=cp;
+    const chg=(Math.random()-0.47)*o*0.03;
+    const c=Math.max(o+chg,o*0.96);
+    const h=Math.max(o,c)*(1+Math.random()*0.012);
+    const l=Math.min(o,c)*(1-Math.random()*0.012);
+    candles.push({o,h,l,c});cp=c;
+  }
   candles[29].c=s.price;
-  // Add toggle buttons
-  let tb=document.getElementById('chartToggle');if(tb)tb.remove();
-  tb=document.createElement('div');tb.id='chartToggle';tb.style='display:flex;gap:8px;margin-bottom:6px';
+
+  // Remove old toggle if present
+  const oldTb=document.getElementById('chartToggle');if(oldTb)oldTb.remove();
+  const oldCd=document.getElementById('candleDiv');if(oldCd)oldCd.remove();
+
+  const tb=document.createElement('div');
+  tb.id='chartToggle';tb.style='display:flex;gap:8px;margin-bottom:6px';
   tb.innerHTML='<button onclick="window.showLine()" id="btnLine" style="flex:1;padding:5px;background:#00d4aa;color:#0a0e1a;border:none;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer">📈 Line</button><button onclick="window.showCandle()" id="btnCandle" style="flex:1;padding:5px;background:#1e3a5f;color:#c0cce0;border:none;border-radius:4px;font-size:11px;cursor:pointer">🕯️ Candle</button>';
   canvas.parentElement.insertBefore(tb,canvas);
-  let cdiv=document.getElementById('candleDiv');if(cdiv)cdiv.remove();
   window._candles=candles;
+
   window.showLine=function(){
     document.getElementById('btnLine').style.cssText='flex:1;padding:5px;background:#00d4aa;color:#0a0e1a;border:none;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer';
     document.getElementById('btnCandle').style.cssText='flex:1;padding:5px;background:#1e3a5f;color:#c0cce0;border:none;border-radius:4px;font-size:11px;cursor:pointer';
-    let cd=document.getElementById('candleDiv');if(cd)cd.style.display='none';
+    const cd=document.getElementById('candleDiv');if(cd)cd.style.display='none';
     canvas.style.display='block';
     if(stockChartInst)stockChartInst.destroy();
     const ctx=canvas.getContext('2d');
@@ -684,32 +747,54 @@ function showStockDetail(name){
     const lbls=Array.from({length:30},(_,i)=>{const d=new Date();d.setDate(d.getDate()-29+i);return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});});
     stockChartInst=new Chart(ctx,{type:'line',data:{labels:lbls,datasets:[{data:pts,borderColor:'#00d4aa',backgroundColor:'rgba(0,212,170,0.08)',fill:true,tension:0.4,pointRadius:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}},y:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}}}}});
   };
+
   window.showCandle=function(){
     document.getElementById('btnCandle').style.cssText='flex:1;padding:5px;background:#00d4aa;color:#0a0e1a;border:none;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer';
     document.getElementById('btnLine').style.cssText='flex:1;padding:5px;background:#1e3a5f;color:#c0cce0;border:none;border-radius:4px;font-size:11px;cursor:pointer';
-    canvas.style.display='none';if(stockChartInst){stockChartInst.destroy();stockChartInst=null;}
+    canvas.style.display='none';
+    if(stockChartInst){stockChartInst.destroy();stockChartInst=null;}
     let cdiv=document.getElementById('candleDiv');
     if(!cdiv){cdiv=document.createElement('canvas');cdiv.id='candleDiv';canvas.parentElement.appendChild(cdiv);}
     cdiv.width=canvas.parentElement.offsetWidth-20;cdiv.height=190;cdiv.style.cssText='width:100%;display:block';
-    const cc=cdiv.getContext('2d');const W=cdiv.width,H=cdiv.height,PAD=30;
-    const minP=Math.min(...candles.map(c=>c.l))*0.998;const maxP=Math.max(...candles.map(c=>c.h))*1.002;
-    const toY=p=>PAD+(H-2*PAD)*(1-(p-minP)/(maxP-minP));const cw=Math.floor((W-PAD)/30)-2;
+    const cc=cdiv.getContext('2d');
+    const W=cdiv.width,H=cdiv.height,PAD=30;
+    const minP=Math.min(...candles.map(c=>c.l))*0.998;
+    const maxP=Math.max(...candles.map(c=>c.h))*1.002;
+    const toY=p=>PAD+(H-2*PAD)*(1-(p-minP)/(maxP-minP));
+    const cw=Math.floor((W-PAD)/30)-2;
     cc.fillStyle='#0d1224';cc.fillRect(0,0,W,H);
     cc.strokeStyle='#1e3a5f';cc.lineWidth=1;
     for(let i=0;i<=4;i++){const y=PAD+i*(H-2*PAD)/4;cc.beginPath();cc.moveTo(PAD,y);cc.lineTo(W,y);cc.stroke();}
     cc.fillStyle='#4a6fa5';cc.font='10px monospace';cc.textAlign='right';
     for(let i=0;i<=4;i++){const p=maxP-(i*(maxP-minP)/4);cc.fillText(p.toFixed(0),PAD-2,PAD+i*(H-2*PAD)/4+3);}
-    candles.forEach((c,i)=>{const x=PAD+i*((W-PAD)/30)+2;const up=c.c>=c.o;cc.strokeStyle=up?'#00ff88':'#ff4444';cc.fillStyle=up?'#00ff88':'#ff4444';cc.beginPath();cc.moveTo(x+cw/2,toY(c.h));cc.lineTo(x+cw/2,toY(c.l));cc.stroke();const bodyY=Math.min(toY(c.o),toY(c.c));const bodyH=Math.max(Math.abs(toY(c.o)-toY(c.c)),2);cc.fillRect(x,bodyY,cw,bodyH);});
+    candles.forEach((c,i)=>{
+      const x=PAD+i*((W-PAD)/30)+2;
+      const up=c.c>=c.o;
+      cc.strokeStyle=up?'#00ff88':'#ff4444';cc.fillStyle=up?'#00ff88':'#ff4444';
+      cc.beginPath();cc.moveTo(x+cw/2,toY(c.h));cc.lineTo(x+cw/2,toY(c.l));cc.stroke();
+      const bodyY=Math.min(toY(c.o),toY(c.c));
+      const bodyH=Math.max(Math.abs(toY(c.o)-toY(c.c)),2);
+      cc.fillRect(x,bodyY,cw,bodyH);
+    });
   };
+
   window.showLine();
-  document.querySelectorAll('[id^="tab-"],[id^="view-"]').forEach(v=>v.classList.remove('active'));
+  _clearAllViews();
   document.getElementById('view-stock').classList.add('active');
   window.scrollTo(0,0);
 }
 
 function hideStockDetail(){
   document.getElementById('view-stock').classList.remove('active');
-  document.getElementById('tab-'+currentMainTab).classList.add('active');
+  const target=document.getElementById('tab-'+currentMainTab);
+  if(target) target.classList.add('active');
+  // restore tab highlight
+  document.querySelectorAll('.tab-bar .tab').forEach((t,i)=>{
+    const tabs=['markets','crypto','commodities','exchanges','macro','fx'];
+    if(tabs[i]===currentMainTab) t.classList.add('active'); else t.classList.remove('active');
+  });
+  _clearAllNavItems();
+  document.getElementById('nav-markets').classList.add('active');
   window.scrollTo(0,0);
 }
 
@@ -722,12 +807,14 @@ document.getElementById('search-input').addEventListener('input',function(){
   if(!matches.length){results.style.display='none';return;}
   results.style.display='block';
   results.innerHTML=matches.map(c=>`
-    <div class="search-result-item" onclick="showStockDetail('${c.name}');document.getElementById('search-results').style.display='none';document.getElementById('search-input').value=''">
+    <div class="search-result-item" onclick="showStockDetail('${c.name.replace(/'/g,"\\'")}');document.getElementById('search-results').style.display='none';document.getElementById('search-input').value=''">
       <div><div class="search-result-name">${c.name}</div><div class="search-result-sector">${c.sector}</div></div>
       <div class="${c.chg>=0?'green':'red'}">₦${c.price.toFixed(2)}</div>
     </div>`).join('');
 });
-document.addEventListener('click',e=>{if(!e.target.closest('.search-container'))document.getElementById('search-results').style.display='none';});
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.search-container')) document.getElementById('search-results').style.display='none';
+});
 
 // ===================== PORTFOLIO =====================
 function addToPortfolio(){
@@ -742,7 +829,12 @@ function addToPortfolio(){
   document.getElementById('port-price').value='';
   renderPortfolio();
 }
-function addToPortfolioFromDetail(){if(!currentStock)return;showBottomNav('portfolio');document.getElementById('port-company').value=currentStock.name;document.getElementById('port-price').value=currentStock.price.toFixed(2);}
+function addToPortfolioFromDetail(){
+  if(!currentStock)return;
+  showBottomNav('portfolio');
+  document.getElementById('port-company').value=currentStock.name;
+  document.getElementById('port-price').value=currentStock.price.toFixed(2);
+}
 function removePosition(i){portfolio.splice(i,1);renderPortfolio();}
 function renderPortfolio(){
   if(!portfolio.length){
@@ -819,7 +911,9 @@ function checkAlerts(){
 
 // ===================== INDEX CHART =====================
 function drawIndexChart(){
-  const ctx=document.getElementById('indexChart').getContext('2d');
+  const canvas=document.getElementById('indexChart');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
   new Chart(ctx,{type:'line',data:{labels:['9am','10am','11am','12pm','1pm','2pm','3pm','4pm'],datasets:[{data:[97200,97380,97290,97520,97610,97480,97750,97842],borderColor:'#00d4aa',backgroundColor:'rgba(0,212,170,0.1)',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#00d4aa'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}},y:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}}}}});
 }
 
