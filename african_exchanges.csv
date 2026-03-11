@@ -1,0 +1,402 @@
+Exchange,Company,Sector,Price
+Ghana (GSE),Company,Sector,Price
+Ghana (GSE),Aluworks,Basic Materials,0.10
+Ghana (GSE),Benso Oil Palm Plantation,Consumer Goods,79.00
+Ghana (GSE),CAL Bank,Financials,0.88
+Ghana (GSE),Clydestone (Ghana),Technology,0.74
+Ghana (GSE),Camelot Ghana,Industrials,0.14
+Ghana (GSE),Cocoa Processing Company,Consumer Goods,0.08
+Ghana (GSE),Ecobank Ghana,Financials,57.00
+Ghana (GSE),Enterprise Group,Financials,9.92
+Ghana (GSE),Fan Milk,Consumer Goods,16.35
+Ghana (GSE),GCB Bank,Financials,52.00
+Ghana (GSE),Guinness Ghana Breweries,Consumer Goods,16.50
+Ghana (GSE),Ghana Oil Company,Oil & Gas,6.60
+Ghana (GSE),Hords,Consumer Goods,0.10
+Ghana (GSE),Mega African Capital,Financials,5.20
+Ghana (GSE),Meridian-Marshalls Holdings,Consumer Services,0.10
+Ghana (GSE),PBC,Consumer Goods,0.02
+Ghana (GSE),Samba Foods,Consumer Goods,0.55
+Ghana (GSE),Standard Chartered Bank Ghana,Financials,69.14
+Ghana (GSE),SIC Insurance Company,Financials,5.98
+Ghana (GSE),Societe Generale Ghana,Financials,11.37
+Ghana (GSE),TotalEnergies Marketing Ghana,Oil & Gas,40.15
+Ghana (GSE),Unilever Ghana,Consumer Goods,28.46
+Ghana (GSE),Republic Bank,Financials,3.26
+Ghana (GSE),Tullow Oil,Oil & Gas,11.92
+Ghana (GSE),Trust Bank (The Gambia),Financials,1.20
+Ghana (GSE),Ecobank,Financials,1.91
+Ghana (GSE),AngloGold Ashanti,Basic Materials,37.00
+Ghana (GSE),AngloGold Ashanti Depository Shares,Basic Materials,0.42
+Ghana (GSE),Agricultural Development Bank,Financials,5.06
+Ghana (GSE),Intravenous Infusions,Health Care,0.05
+Ghana (GSE),Access Bank Ghana,Financials,46.64
+Ghana (GSE),Digicut Production and Advertising,Consumer Services,0.09
+Ghana (GSE),MTN Ghana,Telecom,6.30
+Ghana (GSE),Dannex Ayrton Starwin Limited,Health Care,0.41
+Ghana (GSE),Pesewa One,Financials,0.68
+Ghana (GSE),Asante Gold Corporation,Basic Materials,8.89
+Ghana (GSE),NewGold Issuer,ETF,546.00
+Ghana (GSE),First Atlantic Bank,Financials,7.84
+Ghana (GSE),Standard Chartered Bank Ghana,69.14,+9.99%
+Ghana (GSE),SIC Insurance,5.98,+9.93%
+Ghana (GSE),Ecobank Transnational Incorporated,1.91,+9.77%
+Ghana (GSE),Republic Bank,3.26,+9.76%
+Ghana (GSE),Dannex Ayrton Starwin,0.41,+7.89%
+Ghana (GSE),Societe Generale Ghana,11.37,-0.18%
+Ghana (GSE),MTN Ghana,6.30,"1,171,611"
+Ghana (GSE),Ghana Oil,6.60,"756,136"
+Ghana (GSE),GCB Bank,52.00,"154,831"
+Ghana (GSE),CAL Bank,0.88,"127,625"
+Ghana (GSE),SIC Insurance,5.98,"109,304"
+Ghana (GSE),,BRVM-CI,416.46
+Ghana (GSE),,BSE DCI,"10,995.42"
+Ghana (GSE),,DSE ASI,"3,878.16"
+Ghana (GSE),,EGX 30,"47,772.74"
+Ghana (GSE),,GSE-CI,"15,185.49"
+Ghana (GSE),,JSE ASI,"116,785.77"
+Ghana (GSE),,LuSE ASI,"26,983.49"
+Ghana (GSE),,MASI,"16,902.46"
+Ghana (GSE),,MSE ASI,"577,608.68"
+Ghana (GSE),,NGX ASI,"196,066.11"
+Ghana (GSE),,NSE ASI,206.80
+Ghana (GSE),,NSX OI,"2,141.90"
+Ghana (GSE),,RSE ASI,187.55
+Ghana (GSE),,SEM ASI,"2,015.74"
+Ghana (GSE),,TUNINDEX,"14,877.24"
+Ghana (GSE),,USE ASI,"1,978.99"
+Ghana (GSE),,ZSE ASI,359.49
+Kenya (NSE),,BRVM-CI,416.46
+Kenya (NSE),,BSE DCI,"10,995.42"
+Kenya (NSE),,DSE ASI,"3,878.16"
+Kenya (NSE),,EGX 30,"47,772.74"
+Kenya (NSE),,GSE-CI,"15,185.49"
+Kenya (NSE),,JSE ASI,"116,785.77"
+Kenya (NSE),,LuSE ASI,"26,983.49"
+Kenya (NSE),,MASI,"16,902.46"
+Kenya (NSE),,MSE ASI,"577,608.68"
+Kenya (NSE),,NGX ASI,"196,066.11"
+Kenya (NSE),,NSE ASI,206.80
+Kenya (NSE),,NSX OI,"2,141.90"
+Kenya (NSE),,RSE ASI,187.55
+Kenya (NSE),,SEM ASI,"2,015.74"
+Kenya (NSE),,TUNINDEX,"14,877.24"
+Kenya (NSE),,USE ASI,"1,978.99"
+Kenya (NSE),,ZSE ASI,359.49
+Egypt (EGX),Company,Sector,Price
+Egypt (EGX),Abu Qir Fertilizers,Basic Materials,79.90
+Egypt (EGX),Abu Dhabi Islamic Bank Egypt,Financials,38.97
+Egypt (EGX),Acrow Misr,Industrials,127.52
+Egypt (EGX),Advanced Pharmaceutical Packaging Co.,Industrials,2.33
+Egypt (EGX),Ajwa For Food Industries Company Egypt,Consumer Goods,108.42
+Egypt (EGX),Al Baraka Bank Egypt,Financials,18.11
+Egypt (EGX),"Al Fanar Contracting, Construction, Trade, Import And Export",Industrials,3.17
+Egypt (EGX),Al Moasher For Programming And Information Dissemination,Technology,2.99
+Egypt (EGX),Al Tawfeek Leasing Company - A.T.Lease,Financials,4.70
+Egypt (EGX),Alexandria Cement,Industrials,5.96
+Egypt (EGX),Alexandria Containers And Goods,Industrials,29.40
+Egypt (EGX),Alexandria Flour Mills,Consumer Goods,57.04
+Egypt (EGX),Alexandria Mineral Oils Company,Basic Materials,8.57
+Egypt (EGX),Alexandria National Company For Financial Investments,Financials,103.56
+Egypt (EGX),Alexandria New Medical Center,Health Care,46.97
+Egypt (EGX),Alexandria Co for Pharmaceutical and Chemical Industries,Health Care,802.07
+Egypt (EGX),Alexandria Spinning & Weaving (SPINALEX),Consumer Goods,14.10
+Egypt (EGX),Ameco Medical Industries,Health Care,17.51
+Egypt (EGX),Amer Group Holding,Financials,1.90
+Egypt (EGX),Arab Aluminum,Basic Materials,19.73
+Egypt (EGX),Arab Ceramic,Industrials,1.06
+Egypt (EGX),Arabia Cotton Ginning,Consumer Goods,7.94
+Egypt (EGX),Arab Moltaka Investments Co.,Financials,5.40
+Egypt (EGX),Arab Drug Company for Pharmaceuticals and Chemical,Health Care,156.86
+Egypt (EGX),Arab Polvara Spinning And Weaving,Consumer Goods,8.12
+Egypt (EGX),Arab Real Estate Investment Co.,Financials,2.47
+Egypt (EGX),Arab Valves Company,Industrials,7.20
+Egypt (EGX),Arabia Investments Development Financial Investments Holding,Financials,0.32
+Egypt (EGX),Arabian Cement Company,Industrials,49.25
+Egypt (EGX),Asek Company For Mining - Ascom,Basic Materials,41.00
+Egypt (EGX),Assiut Islamic National Trade and Development,Industrials,28.08
+Egypt (EGX),Atlas For Land Reclamation And Agricultural Processing,Consumer Goods,1.75
+Egypt (EGX),El Barbary Investment Group (BIG),Consumer Goods,0.14
+Egypt (EGX),Beltone Financial Holding,Financials,2.96
+Egypt (EGX),Beltone Capital Holding For Financial Investments,Financials,19.25
+Egypt (EGX),Brothers Solidarity For Real Estate Investment And Food Security,Financials,1.55
+Egypt (EGX),Cairo Development and Investment,Financials,16.87
+Egypt (EGX),Cairo Educational Services,Consumer Services,53.72
+Egypt (EGX),Cairo Oils & Soap,Consumer Goods,1.36
+Egypt (EGX),Cairo Pharmaceuticals and Chemical Industries,Health Care,252.03
+Egypt (EGX),Cairo Poultry,Consumer Goods,32.60
+Egypt (EGX),Canal Shipping Agencies,Industrials,28.31
+Egypt (EGX),Ceramic & Porcelain,Consumer Goods,15.60
+Egypt (EGX),Qalaa Holdings,Financials,3.61
+Egypt (EGX),Qalaa Holdings - Preferred Shares,Financials,29.67
+Egypt (EGX),Commercial International Bank (Egypt),Financials,129.50
+Egypt (EGX),Credit Agricole Egypt,Financials,22.19
+Egypt (EGX),Delta Construction & Rebuilding,Financials,23.05
+Egypt (EGX),Delta Co for Printing and Packaging,Industrials,99.51
+Egypt (EGX),Delta Insurance,Financials,11.38
+Egypt (EGX),Delta Sugar,Consumer Goods,48.69
+Egypt (EGX),Development & Engineering Consultants,Industrials,73.42
+Egypt (EGX),Dice Sport & Casual Wear,Consumer Goods,1.85
+Egypt (EGX),East Delta Flour Mills,Consumer Goods,297.30
+Egypt (EGX),Eastern Tobacco,Consumer Goods,37.85
+Egypt (EGX),Edita Food Industries,Consumer Goods,28.10
+Egypt (EGX),EFG Hermes Holding Company,Financials,26.68
+Egypt (EGX),Egx 30 Index Etf,Financials,8.95
+Egypt (EGX),Egypt Aluminum Company,Basic Materials,277.00
+Egypt (EGX),Egypt For Poultry,Consumer Goods,8.44
+Egypt (EGX),Egypt Intercontinental for Granite and Marble,Industrials,5.01
+Egypt (EGX),Egypt-South Africa For Communication,Telecom,0.99
+Egypt (EGX),Egyptian Arabian Company Themar for Securities Brokerage,Financials,3.01
+Egypt (EGX),Egyptian Chemical Industries (Kima),Basic Materials,12.15
+Egypt (EGX),Orange Egypt for Telecommunications,Telecom,11.83
+Egypt (EGX),Egyptian Financial & Industrial,Basic Materials,220.00
+Egypt (EGX),Egyptian For Developing Building Materials,Industrials,0.71
+Egypt (EGX),Egyptian For Tourism Resorts,Consumer Services,7.13
+Egypt (EGX),Egyptian Gulf Bank,Financials,0.38
+Egypt (EGX),Egyptian International Pharmaceuticals Industries,Health Care,80.27
+Egypt (EGX),Egyptian Company for International Touristic Projects,Consumer Services,13.76
+Egypt (EGX),Egyptian Iron & Steel,Basic Materials,31.51
+Egypt (EGX),Egyptian Kuwait Holding,Financials,0.67
+Egypt (EGX),Egyptian Media Production City,Consumer Services,25.56
+Egypt (EGX),Egyptian Modern Education Systems,Consumer Services,0.91
+Egypt (EGX),Real Estate Egyptian Consortium,Financials,1.12
+Egypt (EGX),Real Estate Egyptian Consortium Bearer Shares,Financials,11.72
+Egypt (EGX),Egyptian Satellites (NileSat),Telecom,6.99
+Egypt (EGX),Egyptian Starch & Glucose,Consumer Goods,9.38
+Egypt (EGX),Egyptian Transport & Commercial Services,Industrials,7.50
+Egypt (EGX),Egyptians Abroad For Investment & Development,Financials,2.67
+Egypt (EGX),Egyptians For Investment & Urban Development,Financials,0.73
+Egypt (EGX),Egyptians for Housing Development,Financials,2.14
+Egypt (EGX),Al Ahly for Development & Investment,Financials,32.10
+Egypt (EGX),El Ahram Co. For Printing And Packing,Industrials,12.36
+Egypt (EGX),Arab Engineering Industries,Industrials,1.83
+Egypt (EGX),El Arabia For Land Reclamation,Financials,305.20
+Egypt (EGX),El Badr Plastic,Industrials,0.62
+Egypt (EGX),El Dawlia Fertilizers And Chemicals,Basic Materials,15.60
+Egypt (EGX),El Ezz Aldekhela Steel - Alexandria,Basic Materials,"1,251.00"
+Egypt (EGX),El Ezz Ceramics & Porcelain (Gemma),Industrials,26.11
+Egypt (EGX),El Kahera El Watania Investment,Financials,56.33
+Egypt (EGX),El Kahera Housing,Financials,1.13
+Egypt (EGX),El Nasr Clothes & Textiles - KABO,Consumer Goods,5.93
+Egypt (EGX),El Nasr For Manufacturing Agricultural Crops,Consumer Goods,39.99
+Egypt (EGX),El Nasr Transformers (El Maco),Industrials,16.00
+Egypt (EGX),El Ebour Real Estate Investment,Financials,38.01
+Egypt (EGX),Al Orouba Securities Brokerage,Financials,1.17
+Egypt (EGX),El Shams Housing & Urbanization,Financials,7.11
+Egypt (EGX),El Shams Pyramids For Hotels & Touristic Projects,Consumer Services,1.91
+Egypt (EGX),El Wadi Touristic Development,Consumer Services,1.46
+Egypt (EGX),El-Nile Co. For Pharmaceuticals And Chemical Industries,Health Care,101.00
+Egypt (EGX),Electro Cable Egypt Company,Industrials,2.17
+Egypt (EGX),El Saeed Contracting and Real Estate Investment,Industrials,1.39
+Egypt (EGX),El Sewedy Electric Company,Industrials,79.40
+Egypt (EGX),Emaar Misr For Development,Financials,9.21
+Egypt (EGX),Engineering Industries (Icon),Basic Materials,32.11
+Egypt (EGX),Export Development Bank Of Egypt,Financials,16.40
+Egypt (EGX),Extracted Oils & Derivatives,Consumer Goods,7.98
+Egypt (EGX),Ezz Steel,Basic Materials,133.90
+Egypt (EGX),Faisal Islamic Bank Of Egypt (EGP),Financials,34.17
+Egypt (EGX),Faisal Islamic Bank Of Egypt (USD),Financials,1.02
+Egypt (EGX),Ferchem Misr Company for Fertilizers and Chemicals,Basic Materials,76.80
+Egypt (EGX),First Investment And Real Estate Development,Financials,2.26
+Egypt (EGX),GB Auto,Consumer Goods,25.90
+Egypt (EGX),General Co for Land Reclamation Development and Reconstruction,Industrials,152.21
+Egypt (EGX),General Company for Silos and Storage,Industrials,222.14
+Egypt (EGX),Genial Tours,Consumer Services,3.42
+Egypt (EGX),Gharbia Islamic Housing Development,Financials,34.74
+Egypt (EGX),Giza General Contracting,Financials,0.54
+Egypt (EGX),Glaxo Smith Kline,Health Care,61.79
+Egypt (EGX),Global Telecom Holding,Telecom,4.90
+Egypt (EGX),"GMC Group For Industrial, Commercial And Financial Investments",Financials,1.72
+Egypt (EGX),Golden Coast Company,Consumer Services,2.79
+Egypt (EGX),Golden Pyramids Plaza,Consumer Services,1.40
+Egypt (EGX),Golden Textiles & Clothes Wool,Consumer Goods,42.80
+Egypt (EGX),Grand Investment Capital,Financials,49.10
+Egypt (EGX),Gulf Arab Investment,Financials,0.29
+Egypt (EGX),Gulf Canadian Real Estate Investment Co.,Financials,1.36
+Egypt (EGX),Heliopolis Housing,Financials,5.64
+Egypt (EGX),Housing & Development Bank,Financials,113.32
+Egypt (EGX),Indus & Engineer,#N/A,8.74
+Egypt (EGX),Integrated Engineering Group Sae,Industrials,0.20
+Egypt (EGX),Inter-Cairo For Aluminum Industry,Basic Materials,1.00
+Egypt (EGX),International Agricultural Products,Consumer Goods,18.80
+Egypt (EGX),International Business Corporation For Trade And Franchise,Consumer Goods,2.96
+Egypt (EGX),International Co For Investment & Development,Financials,3.65
+Egypt (EGX),International Company For Leasing (Incolease),Financials,15.76
+Egypt (EGX),International Company For Medical Industries,Health Care,2.63
+Egypt (EGX),International Dry Ice,Basic Materials,2.56
+Egypt (EGX),International Printing & Packaging Materials Co.,Industrials,1.00
+Egypt (EGX),Ismailia Development And Real Estate,Financials,32.87
+Egypt (EGX),Ismailia Misr Poultry,Consumer Goods,13.71
+Egypt (EGX),Ismailia National Food Industries,Consumer Goods,86.40
+Egypt (EGX),IT Synergy,Technology,5.00
+Egypt (EGX),Juhayna Food Industries,Consumer Goods,26.58
+Egypt (EGX),Kafr El Zayat Pesticides and Chemicals,Basic Materials,10.11
+Egypt (EGX),Lakah Group,Industrials,0.49
+Egypt (EGX),Lecico Egypt,Industrials,24.20
+Egypt (EGX),Mansoura Poultry,Consumer Goods,1.58
+Egypt (EGX),Maridive & Oil Services,Oil & Gas,0.44
+Egypt (EGX),Marsa Marsa Alam For Tourism Development,Consumer Services,3.37
+Egypt (EGX),Marseille Almasreia Alkhalegeya For Holding Investment,Financials,3.82
+Egypt (EGX),MB Engineering,Industrials,3.72
+Egypt (EGX),Medical Packaging Company,Industrials,1.58
+Egypt (EGX),Medinet Nasr Housing,Financials,3.40
+Egypt (EGX),Memphis Pharmaceuticals,Health Care,166.81
+Egypt (EGX),Mena Touristic & Real Estate Investment,Financials,4.58
+Egypt (EGX),Middle & West Delta Flour Mills,Consumer Goods,505.37
+Egypt (EGX),Middle East Glass Manufacturing,Industrials,43.92
+Egypt (EGX),Middle Egypt Flour Mills,Consumer Goods,85.04
+Egypt (EGX),Minapharm Pharmaceuticals,Health Care,474.39
+Egypt (EGX),Misr Beni Suef Cement,Industrials,275.05
+Egypt (EGX),Misr Cement (Qena),Industrials,183.69
+Egypt (EGX),Misr Chemical Industries,Basic Materials,35.10
+Egypt (EGX),Misr Refrigeration and Air Conditioning,Industrials,119.16
+Egypt (EGX),Egypt Free Shops,Consumer Services,30.82
+Egypt (EGX),Misr Elsalam For Development & Advanced Technology,Financials,1.00
+Egypt (EGX),Misr Financial Investments,Financials,1.00
+Egypt (EGX),Misr Fertilizers Production Company,Basic Materials,41.90
+Egypt (EGX),Misr Hotels,Consumer Services,24.52
+Egypt (EGX),Misr Kuwait Investment And Trading (Meatello),Consumer Goods,5.53
+Egypt (EGX),Misr National Steel - Ataqa,Basic Materials,8.30
+Egypt (EGX),Misr Oils & Soap,Consumer Goods,153.56
+Egypt (EGX),Modern Waterproofing Company,Basic Materials,3.80
+Egypt (EGX),Shorouk for Modern Printing and Packaging,Industrials,72.00
+Egypt (EGX),Mohandes Insurance,Financials,22.85
+Egypt (EGX),NAEEM Holding,Financials,0.11
+Egypt (EGX),Nasr Company For Civil Works,Industrials,4.48
+Egypt (EGX),National Bank Of Kuwait Egypt,Financials,13.00
+Egypt (EGX),National Cement,Industrials,15.51
+Egypt (EGX),National Company For Maize Products,Consumer Goods,58.00
+Egypt (EGX),National Drilling Company,Oil & Gas,4.69
+Egypt (EGX),National Housing for Professional Syndicates,Financials,60.86
+Egypt (EGX),Copper For Commercial Investment & Real Estate Development,Financials,0.32
+Egypt (EGX),Egypt Gas Company,Utilities,43.11
+Egypt (EGX),New Castle For Investment Sports,Consumer Services,2.00
+Egypt (EGX),Nile City Investment,Financials,344.28
+Egypt (EGX),Nile Cotton Ginning,Industrials,6.55
+Egypt (EGX),North Africa Company For Real Estate Investment,Financials,1.77
+Egypt (EGX),North Cairo Flour Mills,Consumer Goods,99.90
+Egypt (EGX),North Upper Egypt Development & Agricultural Production,Consumer Goods,2.19
+Egypt (EGX),Nozha International Hospital,Health Care,13.00
+Egypt (EGX),October Pharma,Health Care,188.20
+Egypt (EGX),Orascom Construction Industries,Industrials,464.97
+Egypt (EGX),Orascom Development Holding AG,Consumer Services,5.09
+Egypt (EGX),Orascom Hotels And Development,Consumer Services,25.37
+Egypt (EGX),Orascom Investment Holding,Telecom,1.22
+Egypt (EGX),Oriental Weavers Carpet,Consumer Goods,23.06
+Egypt (EGX),Osool ESB Securities Brokerage,Financials,1.62
+Egypt (EGX),Paint & Chemicals Industries,Basic Materials,39.80
+Egypt (EGX),Palm Hills Development Company,Financials,8.90
+Egypt (EGX),Paper Middle East (Simo),Industrials,9.21
+Egypt (EGX),Pharaoh Tech For Control And Communication Systems,Technology,14.31
+Egypt (EGX),Aspire Capital Holding For Financial Investments,Financials,0.29
+Egypt (EGX),Port Said Agricultural Development and Construction,Technology,0.86
+Egypt (EGX),Arab Developers Holding,Consumer Services,0.22
+Egypt (EGX),Prime Holding,Financials,2.02
+Egypt (EGX),Pyramisa Hotels and Resorts,Consumer Services,183.98
+Egypt (EGX),Qatar National Bank Alahly,Financials,40.71
+Egypt (EGX),General Company for Paper Industry Rakta,Industrials,19.96
+Egypt (EGX),Raya Contact Center,Technology,8.77
+Egypt (EGX),Raya Holding for Financial Investments,Financials,5.83
+Egypt (EGX),Reacap Financial Investments,Financials,8.77
+Egypt (EGX),Remco For Touristic Villages Construction,Consumer Services,3.41
+Egypt (EGX),Riva Pharma,Health Care,7.00
+Egypt (EGX),Rowad Misr Tourism Investment,Consumer Services,480.75
+Egypt (EGX),Rowad Tourism (Al Rowad),Consumer Services,28.19
+Egypt (EGX),Rubex International For Plastic And Acrylic Manufacturing,Basic Materials,9.16
+Egypt (EGX),Sabaa International Company For Pharmaceutical And Chemical,Health Care,3.25
+Egypt (EGX),Samad Misr EGYFERT,Basic Materials,176.80
+Egypt (EGX),Samcrete Misr,Industrials,3.76
+Egypt (EGX),Samcrete Misr Preferred Shares,Industrials,13.62
+Egypt (EGX),Saudi Egyptian Investment & Finance,Financials,141.42
+Egypt (EGX),Saudi Egyptian Investment & Finance (Usd),Financials,0.95
+Egypt (EGX),Sharkia National Company for Food Security,Consumer Goods,10.26
+Egypt (EGX),Sharm Dreams Co For Tourism Investment,Consumer Services,36.81
+Egypt (EGX),Sidi Kerir Petrochemicals,Basic Materials,18.01
+Egypt (EGX),Sinai Cement,Industrials,58.00
+Egypt (EGX),Six Of October Development & Investment (Sodic),Financials,18.11
+Egypt (EGX),Sky Light For Tourist Development Company,Consumer Services,1.00
+Egypt (EGX),Societe Arabe Internationale De Banque,Financials,2.11
+Egypt (EGX),Sohag National Company For Food Industries,Consumer Goods,38.22
+Egypt (EGX),South Cairo & Giza Mills & Bakeries,Consumer Goods,217.86
+Egypt (EGX),South Valley Cement,Industrials,7.40
+Egypt (EGX),Sues Canal Company For Technology Settling,Consumer Services,270.46
+Egypt (EGX),Suez Bags,Industrials,8.20
+Egypt (EGX),Suez Canal Bank,Financials,39.55
+Egypt (EGX),Suez Cement,Industrials,7.40
+Egypt (EGX),TMG Holding,Financials,79.80
+Egypt (EGX),Taghleef Industries - Egypt,Industrials,23.96
+Egypt (EGX),Telecom Egypt,Telecom,84.01
+Egypt (EGX),The Arab Dairy Products,Consumer Goods,3.61
+Egypt (EGX),Tourah Cement,Industrials,6.77
+Egypt (EGX),Tourism Urbanization,Consumer Services,6.85
+Egypt (EGX),Trans Oceans Tours,Consumer Services,0.03
+Egypt (EGX),Union National Bank Egypt,Financials,6.43
+Egypt (EGX),United Arab Stevedoring,Industrials,0.64
+Egypt (EGX),United Housing & Development,Financials,9.85
+Egypt (EGX),Universal Company for Packaging Materials and Paper,Industrials,0.28
+Egypt (EGX),Univert Food Industries,Consumer Goods,0.95
+Egypt (EGX),Upper Egypt Flour Mills,Consumer Goods,461.63
+Egypt (EGX),Utopia Real Estate Investment and Tourism,Financials,5.02
+Egypt (EGX),Vertika,Technology,1.57
+Egypt (EGX),Vodafone Egypt,Telecom,61.21
+Egypt (EGX),Wadi Kom Ombo for Land Reclamation,Industrials,259.91
+Egypt (EGX),Xpress Integration,Technology,1.00
+Egypt (EGX),Zahraa Maadi Investment & Development,Financials,5.37
+Egypt (EGX),Arabian Food Industries(DOMTY),Consumer Goods,23.51
+Egypt (EGX),Cleopatra Hospital,Health Care,12.92
+Egypt (EGX),Obour Land For Food Industries,Consumer Goods,21.43
+Egypt (EGX),MM Group For Industry And International Trade,Consumer Services,7.91
+Egypt (EGX),CI Capital Holding for Financial Investments,Financials,10.70
+Egypt (EGX),Cairo For Investment And Real Estate Development,Financials,
+Egypt (EGX),Contact Financial Holding,Financials,3.75
+Egypt (EGX),Sarwa Capital,Financials,3.75
+Egypt (EGX),Fawry for Banking Technology and Electronic Payment,Technology,17.90
+Egypt (EGX),ODIN Investment,Financials,1.75
+Egypt (EGX),Tenth of Ramadan for Pharmaceutical Industries and Diagnostic Reagents - Rameda,Health Care,4.59
+Egypt (EGX),Al Arafa Investment And Consulting in EGP,Consumer Services,2.22
+Egypt (EGX),Speed Medical,Health Care,0.34
+Egypt (EGX),Orascom Financial Holdings,Financials,0.54
+Egypt (EGX),Arab Company for Asset Management And Development,Financials,2.09
+Egypt (EGX),Ibnsina Pharma,Health Care,10.65
+Egypt (EGX),Taaleem Management Services,Consumer Services,15.00
+Egypt (EGX),Integrated Diagnostics Holdings,Health Care,20.00
+Egypt (EGX),Iron and Steel for Mines and Quarries,Basic Materials,7.17
+Egypt (EGX),Tanmiya for Real Estate Investment,Technology,4.30
+Egypt (EGX),E-finance For Digital and Financial Investments,Technology,19.00
+Egypt (EGX),Gadwa For Industrial Development,Financials,0.80
+Egypt (EGX),Pioneers Properties For Urban Development,Financials,4.18
+Egypt (EGX),Al Khair River For Development Agricultural Investment,Consumer Goods,0.64
+Egypt (EGX),Macro Group Pharmaceuticals,Health Care,1.38
+Egypt (EGX),Odin for Investment & Development,Financials,3.50
+Egypt (EGX),Prime Holding,2.02,+10.38%
+Egypt (EGX),Alexandria New Medical Center,46.97,+8.75%
+Egypt (EGX),Universal Company for Packaging Materials and Paper,0.28,+7.69%
+Egypt (EGX),Amer Group Holding,1.90,+6.74%
+Egypt (EGX),Abu Dhabi Islamic Bank Egypt,38.97,+6.62%
+Egypt (EGX),Alexandria Mineral Oils,8.57,-7.95%
+Egypt (EGX),Misr Chemical Industries,35.10,-7.63%
+Egypt (EGX),Samad Misr EGYFERT,176.80,-5.49%
+Egypt (EGX),Alexandria Containers And Goods,29.40,-5.22%
+Egypt (EGX),Egyptian Transport & Commercial Services,7.50,-5.06%
+Egypt (EGX),Arab Developers Holding,0.22,"153,541,291"
+Egypt (EGX),Qalaa Holdings,3.61,"96,468,998"
+Egypt (EGX),Dice Sport & Casual Wear,1.85,"62,700,594"
+Egypt (EGX),Orascom Investment Holding,1.22,"51,038,743"
+Egypt (EGX),Beltone Financial Holding,2.96,"45,794,365"
+Egypt (EGX),,BRVM-CI,416.46
+Egypt (EGX),,BSE DCI,"10,995.42"
+Egypt (EGX),,DSE ASI,"3,878.16"
+Egypt (EGX),,EGX 30,"47,772.74"
+Egypt (EGX),,GSE-CI,"15,185.49"
+Egypt (EGX),,JSE ASI,"116,785.77"
+Egypt (EGX),,LuSE ASI,"26,983.49"
+Egypt (EGX),,MASI,"16,902.46"
+Egypt (EGX),,MSE ASI,"577,608.68"
+Egypt (EGX),,NGX ASI,"196,066.11"
+Egypt (EGX),,NSE ASI,206.80
+Egypt (EGX),,NSX OI,"2,141.90"
+Egypt (EGX),,RSE ASI,187.55
+Egypt (EGX),,SEM ASI,"2,015.74"
+Egypt (EGX),,TUNINDEX,"14,877.24"
+Egypt (EGX),,USE ASI,"1,978.99"
+Egypt (EGX),,ZSE ASI,359.49
