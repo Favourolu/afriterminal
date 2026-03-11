@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AfriTerminal — African Markets Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0e1a; color: #e0e6f0; font-family: 'Courier New', monospace; }
+
+  .topbar {
+    background: #0d1224; border-bottom: 1px solid #1e3a5f;
+    padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .logo { color: #00d4aa; font-size: 20px; font-weight: bold; letter-spacing: 2px; }
+  .tagline { color: #4a6fa5; font-size: 11px; }
+  .live-badge { background: #00d4aa; color: #0a0e1a; padding: 3px 10px; border-radius: 3px; font-size: 11px; font-weight: bold; }
+
+  .search-bar {
+    background: #060910; border: 1px solid #1e3a5f; border-radius: 4px;
+    display: flex; align-items: center; padding: 4px 12px; gap: 8px; width: 280px;
+  }
+  .search-bar input {
+    background: none; border: none; color: #e0e6f0; font-family: 'Courier New', monospace;
+    font-size: 13px; outline: none; width: 100%;
+  }
+  .search-bar input::placeholder { color: #2a4a6f; }
+
+  .search-results {
+    position: absolute; top: 55px; background: #0d1224; border: 1px solid #1e3a5f;
+    border-radius: 4px; width: 280px; z-index: 100; max-height: 200px; overflow-y: auto;
+    display: none;
+  }
+  .search-result-item {
+    padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #0f1829;
+    display: flex; justify-content: space-between;
+  }
+  .search-result-item:hover { background: #111827; }
+  .search-result-name { color: #c0cce0; font-size: 12px; }
+  .search-result-sector { color: #4a6fa5; font-size: 10px; }
+
+  .fx-ticker {
+    background: #060910; border-bottom: 1px solid #1e3a5f;
+    padding: 8px 20px; display: flex; gap: 30px; overflow-x: auto;
+  }
+  .fx-item { display: flex; gap: 8px; align-items: center; white-space: nowrap; }
+  .fx-label { color: #4a6fa5; font-size: 11px; }
+  .fx-value { color: #00d4aa; font-size: 13px; font-weight: bold; }
+
+  /* NAV TABS */
+  .nav-tabs {
+    background: #0d1224; border-bottom: 1px solid #1e3a5f;
+    display: flex; gap: 0; padding: 0 20px;
+  }
+  .nav-tab {
+    padding: 10px 20px; font-size: 12px; cursor: pointer; color: #4a6fa5;
+    border-bottom: 2px solid transparent; letter-spacing: 1px;
+  }
+  .nav-tab.active { color: #00d4aa; border-bottom: 2px solid #00d4aa; }
+  .nav-tab:hover { color: #c0cce0; }
+
+  /* VIEWS */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* MAIN DASHBOARD */
+  .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: #1e3a5f; margin: 1px; }
+  .panel { background: #0d1224; padding: 15px; }
+  .panel-title { color: #4a6fa5; font-size: 11px; letter-spacing: 1px; margin-bottom: 12px; border-bottom: 1px solid #1e3a5f; padding-bottom: 8px; }
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+  .stat-box { background: #060910; border: 1px solid #1e3a5f; border-radius: 4px; padding: 10px; }
+  .stat-label { color: #4a6fa5; font-size: 10px; margin-bottom: 4px; }
+  .stat-value { color: #00d4aa; font-size: 18px; font-weight: bold; }
+  .stat-sub { color: #6b8cba; font-size: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { color: #4a6fa5; text-align: left; padding: 6px 4px; border-bottom: 1px solid #1e3a5f; font-size: 10px; }
+  td { padding: 6px 4px; border-bottom: 1px solid #0f1829; }
+  tr:hover td { background: #111827; cursor: pointer; }
+  .green { color: #00ff88; }
+  .red { color: #ff4444; }
+  .sector-badge { background: #1e3a5f; color: #6b8cba; padding: 1px 6px; border-radius: 3px; font-size: 10px; }
+  .bottom-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1px; background: #1e3a5f; margin: 1px; }
+  .chart-container { height: 200px; position: relative; }
+  .news-item { padding: 8px 0; border-bottom: 1px solid #0f1829; }
+  .news-time { color: #4a6fa5; font-size: 10px; }
+  .news-headline { color: #c0cce0; font-size: 12px; margin-top: 2px; }
+  .news-source { color: #00d4aa; font-size: 10px; }
+
+  /* STOCK DETAIL VIEW */
+  .stock-detail { padding: 20px; }
+  .stock-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .stock-name { font-size: 24px; color: #00d4aa; font-weight: bold; }
+  .stock-sector-tag { background: #1e3a5f; color: #6b8cba; padding: 4px 12px; border-radius: 3px; font-size: 12px; margin-top: 4px; display: inline-block; }
+  .stock-price-big { font-size: 40px; color: #e0e6f0; font-weight: bold; }
+  .stock-change-big { font-size: 18px; margin-top: 4px; }
+  .stock-stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+  .stock-stat-box { background: #0d1224; border: 1px solid #1e3a5f; border-radius: 4px; padding: 12px; }
+  .stock-chart-container { background: #0d1224; border: 1px solid #1e3a5f; border-radius: 4px; padding: 15px; height: 280px; position: relative; margin-bottom: 20px; }
+  .back-btn { background: #1e3a5f; color: #00d4aa; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-family: 'Courier New', monospace; font-size: 12px; margin-bottom: 15px; }
+  .back-btn:hover { background: #2a4a6f; }
+
+  /* PORTFOLIO VIEW */
+  .portfolio-view { padding: 20px; }
+  .portfolio-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .portfolio-total { font-size: 32px; color: #00d4aa; font-weight: bold; }
+  .add-stock-form { background: #0d1224; border: 1px solid #1e3a5f; border-radius: 4px; padding: 15px; margin-bottom: 20px; display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-label { color: #4a6fa5; font-size: 10px; }
+  .form-input { background: #060910; border: 1px solid #1e3a5f; color: #e0e6f0; padding: 8px 12px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px; outline: none; width: 180px; }
+  .form-input:focus { border-color: #00d4aa; }
+  .btn-add { background: #00d4aa; color: #0a0e1a; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-family: 'Courier New', monospace; font-size: 13px; font-weight: bold; }
+  .btn-add:hover { background: #00b894; }
+  .btn-remove { background: none; border: 1px solid #ff4444; color: #ff4444; padding: 4px 10px; border-radius: 3px; cursor: pointer; font-size: 11px; font-family: 'Courier New', monospace; }
+  .portfolio-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+
+  /* ALERTS VIEW */
+  .alerts-view { padding: 20px; }
+  .alert-form { background: #0d1224; border: 1px solid #1e3a5f; border-radius: 4px; padding: 15px; margin-bottom: 20px; display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+  .alert-item { background: #0d1224; border: 1px solid #1e3a5f; border-radius: 4px; padding: 12px 15px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+  .alert-triggered { border-color: #00ff88; }
+  .alert-badge { padding: 3px 10px; border-radius: 3px; font-size: 10px; font-weight: bold; }
+  .badge-active { background: #1e3a5f; color: #4a6fa5; }
+  .badge-triggered { background: #00ff8822; color: #00ff88; }
+  .select-input { background: #060910; border: 1px solid #1e3a5f; color: #e0e6f0; padding: 8px 12px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px; outline: none; }
+
+  .footer { background: #060910; border-top: 1px solid #1e3a5f; padding: 6px 20px; display: flex; justify-content: space-between; font-size: 10px; color: #2a4a6f; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <div class="logo">⚡ AFRITERMINAL</div>
+    <div class="tagline">African Capital Markets Intelligence</div>
+  </div>
+  <div style="position:relative;">
+    <div class="search-bar">
+      <span style="color:#4a6fa5">🔍</span>
+      <input type="text" id="search-input" placeholder="Search NGX stocks..." autocomplete="off">
+    </div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+  <div style="display:flex; gap:15px; align-items:center;">
+    <span style="color:#4a6fa5; font-size:12px;" id="clock"></span>
+    <span class="live-badge">● LIVE</span>
+  </div>
+</div>
+
+<div class="fx-ticker" id="fx-ticker">
+  <div class="fx-item"><span class="fx-label">Loading FX...</span></div>
+</div>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="showView('dashboard')">▶ MARKETS</div>
+  <div class="nav-tab" onclick="showView('portfolio')">▶ PORTFOLIO</div>
+  <div class="nav-tab" onclick="showView('alerts')">▶ PRICE ALERTS</div>
+</div>
+
+<!-- DASHBOARD VIEW -->
+<div id="view-dashboard" class="view active">
+  <div class="grid">
+    <div class="panel">
+      <div class="panel-title">▶ NGX MARKET OVERVIEW</div>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="stat-label">ALL-SHARE INDEX</div><div class="stat-value">97,842</div><div class="stat-sub green">+0.43% today</div></div>
+        <div class="stat-box"><div class="stat-label">MARKET CAP</div><div class="stat-value">$53.3B</div><div class="stat-sub">USD</div></div>
+        <div class="stat-box"><div class="stat-label">NGN/USD</div><div class="stat-value" id="ngn-rate">—</div><div class="stat-sub">Live Rate</div></div>
+        <div class="stat-box"><div class="stat-label">LISTED COMPANIES</div><div class="stat-value">191</div><div class="stat-sub">NGX Securities</div></div>
+      </div>
+      <div class="chart-container"><canvas id="indexChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">▶ NGX TOP SECURITIES</div>
+      <table>
+        <thead><tr><th>COMPANY</th><th>SECTOR</th><th>PRICE</th><th>CHG</th></tr></thead>
+        <tbody id="companies-table"></tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <div class="panel-title">▶ AFRICAN FX RATES (vs USD)</div>
+      <table>
+        <thead><tr><th>CURRENCY</th><th>RATE</th><th>COUNTRY</th></tr></thead>
+        <tbody id="fx-table"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="bottom-grid">
+    <div class="panel">
+      <div class="panel-title">▶ NGX SECTOR BREAKDOWN</div>
+      <div class="chart-container"><canvas id="sectorChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">▶ MARKET INTELLIGENCE</div>
+      <div class="news-item"><div class="news-time">11 MAR 2026 · 09:00</div><div class="news-headline">NGX All-Share Index opens positive amid banking sector rally</div><div class="news-source">NGX GROUP</div></div>
+      <div class="news-item"><div class="news-time">11 MAR 2026 · 08:45</div><div class="news-headline">CBN holds MPR at 27.5% — naira stabilises at ₦1,594/USD</div><div class="news-source">CBN</div></div>
+      <div class="news-item"><div class="news-time">10 MAR 2026 · 17:30</div><div class="news-headline">Dangote Cement posts record Q4 revenue, dividend announced</div><div class="news-source">NGX FILING</div></div>
+      <div class="news-item"><div class="news-time">10 MAR 2026 · 15:00</div><div class="news-headline">African fintech funding up 40% in H1 2025 — report</div><div class="news-source">AFRICAN MARKETS</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- STOCK DETAIL VIEW -->
+<div id="view-stock" class="view">
+  <div class="stock-detail">
+    <button class="back-btn" onclick="showView('dashboard')">← BACK TO MARKETS</button>
+    <div class="stock-header">
+      <div>
+        <div class="stock-name" id="detail-name">—</div>
+        <div class="stock-sector-tag" id="detail-sector">—</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="stock-price-big" id="detail-price">—</div>
+        <div class="stock-change-big" id="detail-change">—</div>
+      </div>
+    </div>
+    <div class="stock-stats-row">
+      <div class="stock-stat-box"><div class="stat-label">52W HIGH</div><div class="stat-value" id="detail-high" style="font-size:16px;">—</div></div>
+      <div class="stock-stat-box"><div class="stat-label">52W LOW</div><div class="stat-value" id="detail-low" style="font-size:16px;">—</div></div>
+      <div class="stock-stat-box"><div class="stat-label">VOLUME</div><div class="stat-value" id="detail-volume" style="font-size:16px;">—</div></div>
+      <div class="stock-stat-box"><div class="stat-label">MKT CAP</div><div class="stat-value" id="detail-mktcap" style="font-size:16px;">—</div></div>
+    </div>
+    <div class="stock-chart-container">
+      <div class="panel-title">▶ PRICE HISTORY (SIMULATED)</div>
+      <canvas id="stockChart"></canvas>
+    </div>
+    <div style="text-align:center; margin-top:10px;">
+      <button class="btn-add" onclick="addToPortfolioFromDetail()" style="margin-right:10px;">+ ADD TO PORTFOLIO</button>
+      <button class="btn-add" onclick="setAlertFromDetail()" style="background:#1e3a5f; color:#00d4aa;">🔔 SET ALERT</button>
+    </div>
+  </div>
+</div>
+
+<!-- PORTFOLIO VIEW -->
+<div id="view-portfolio" class="view">
+  <div class="portfolio-view">
+    <div class="portfolio-header">
+      <div>
+        <div class="panel-title" style="margin-bottom:4px;">▶ MY PORTFOLIO</div>
+        <div class="portfolio-total" id="portfolio-total">₦0.00</div>
+        <div id="portfolio-pnl" style="font-size:14px; color:#4a6fa5;">Total P&L: —</div>
+      </div>
+    </div>
+    <div class="portfolio-summary">
+      <div class="stat-box"><div class="stat-label">TOTAL INVESTED</div><div class="stat-value" id="total-invested" style="font-size:16px;">₦0</div></div>
+      <div class="stat-box"><div class="stat-label">CURRENT VALUE</div><div class="stat-value" id="current-value" style="font-size:16px;">₦0</div></div>
+      <div class="stat-box"><div class="stat-label">POSITIONS</div><div class="stat-value" id="position-count" style="font-size:16px;">0</div></div>
+    </div>
+    <div class="add-stock-form">
+      <div class="form-group">
+        <div class="form-label">COMPANY</div>
+        <input class="form-input" id="port-company" placeholder="e.g. Dangote Cement" list="company-list">
+        <datalist id="company-list"></datalist>
+      </div>
+      <div class="form-group">
+        <div class="form-label">SHARES</div>
+        <input class="form-input" id="port-shares" type="number" placeholder="e.g. 1000" style="width:120px;">
+      </div>
+      <div class="form-group">
+        <div class="form-label">BUY PRICE (₦)</div>
+        <input class="form-input" id="port-price" type="number" placeholder="e.g. 520.00" style="width:140px;">
+      </div>
+      <button class="btn-add" onclick="addToPortfolio()">+ ADD POSITION</button>
+    </div>
+    <table>
+      <thead><tr><th>COMPANY</th><th>SECTOR</th><th>SHARES</th><th>BUY PRICE</th><th>CURRENT</th><th>VALUE</th><th>P&L</th><th></th></tr></thead>
+      <tbody id="portfolio-table"><tr><td colspan="8" style="color:#4a6fa5; text-align:center; padding:20px;">No positions yet. Add your first stock above.</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ALERTS VIEW -->
+<div id="view-alerts" class="view">
+  <div class="alerts-view">
+    <div class="panel-title" style="margin-bottom:15px;">▶ PRICE ALERTS</div>
+    <div class="alert-form">
+      <div class="form-group">
+        <div class="form-label">COMPANY</div>
+        <input class="form-input" id="alert-company" placeholder="e.g. MTN Nigeria" list="company-list-2">
+        <datalist id="company-list-2"></datalist>
+      </div>
+      <div class="form-group">
+        <div class="form-label">CONDITION</div>
+        <select class="select-input" id="alert-condition">
+          <option value="above">Price goes ABOVE</option>
+          <option value="below">Price goes BELOW</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <div class="form-label">TARGET PRICE (₦)</div>
+        <input class="form-input" id="alert-price" type="number" placeholder="e.g. 250.00" style="width:150px;">
+      </div>
+      <button class="btn-add" onclick="addAlert()">🔔 SET ALERT</button>
+    </div>
+    <div id="alerts-list"><div style="color:#4a6fa5; text-align:center; padding:30px;">No alerts set. Add your first alert above.</div></div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>AFRITERMINAL v0.1 — MVP BUILD</span>
+  <span>Data: African-Markets.com · ExchangeRate-API · NGX Group</span>
+  <span id="last-update">—</span>
+</div>
+
+<script>
+// ===================== DATA =====================
+const COMPANIES = [
+  {name:'Dangote Cement', sector:'Industrials', price:550.00, chg:+1.2},
+  {name:'MTN Nigeria', sector:'Telecoms', price:220.50, chg:+0.8},
+  {name:'Zenith Bank', sector:'Financials', price:38.45, chg:-0.3},
+  {name:'Access Holdings', sector:'Financials', price:22.10, chg:+2.1},
+  {name:'Guaranty Trust', sector:'Financials', price:52.30, chg:+1.5},
+  {name:'Airtel Africa', sector:'Telecoms', price:1980.00, chg:-0.5},
+  {name:'BUA Cement', sector:'Industrials', price:92.00, chg:+0.3},
+  {name:'Stanbic IBTC', sector:'Financials', price:88.50, chg:+0.9},
+  {name:'Africa Prudential', sector:'Technology', price:15.65, chg:+0.5},
+  {name:'Abbey Mortgage', sector:'Financials', price:10.30, chg:-1.1},
+  {name:'Academy Press', sector:'Industrials', price:8.40, chg:+0.0},
+  {name:'McNichols', sector:'Consumer Goods', price:6.62, chg:+3.2},
+  {name:'Livingtrust Mortgage', sector:'Financials', price:5.35, chg:+0.2},
+  {name:'Veritas Kapital', sector:'Financials', price:2.29, chg:-0.5},
+  {name:'Multi-Trex Foods', sector:'Consumer Goods', price:0.36, chg:+0.0},
+];
+
+let portfolio = [];
+let alerts = [];
+let stockChartInstance = null;
+let currentDetailStock = null;
+
+// ===================== CLOCK =====================
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toUTCString().replace('GMT','WAT+1');
+}
+setInterval(updateClock, 1000); updateClock();
+
+// ===================== NAVIGATION =====================
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  const tabs = {'dashboard':0,'portfolio':1,'alerts':2};
+  document.querySelectorAll('.nav-tab')[tabs[name]]?.classList.add('active');
+}
+
+// ===================== FX =====================
+async function loadFX() {
+  try {
+    const res = await fetch('https://open.er-api.com/v6/latest/USD');
+    const data = await res.json();
+    const rates = data.rates;
+    const currencies = [
+      {code:'NGN',flag:'🇳🇬',name:'Nigeria'},
+      {code:'GHS',flag:'🇬🇭',name:'Ghana'},
+      {code:'KES',flag:'🇰🇪',name:'Kenya'},
+      {code:'ZAR',flag:'🇿🇦',name:'S.Africa'},
+      {code:'EGP',flag:'🇪🇬',name:'Egypt'},
+      {code:'ETB',flag:'🇪🇹',name:'Ethiopia'},
+      {code:'MAD',flag:'🇲🇦',name:'Morocco'},
+      {code:'XOF',flag:'🌍',name:'W.Africa CFA'},
+    ];
+    document.getElementById('fx-ticker').innerHTML = currencies.map(c =>
+      `<div class="fx-item"><span class="fx-label">${c.flag} ${c.code}/USD</span><span class="fx-value">${rates[c.code]?.toFixed(2)||'—'}</span></div>`
+    ).join('<span style="color:#1e3a5f">|</span>');
+    document.getElementById('ngn-rate').textContent = '₦' + rates['NGN']?.toFixed(0);
+    document.getElementById('fx-table').innerHTML = currencies.map(c =>
+      `<tr><td>${c.flag} ${c.code}</td><td class="green">${rates[c.code]?.toFixed(2)||'—'}</td><td style="color:#4a6fa5">${c.name}</td></tr>`
+    ).join('');
+    document.getElementById('last-update').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+  } catch(e) {}
+}
+
+// ===================== COMPANIES TABLE =====================
+function loadCompanies() {
+  document.getElementById('companies-table').innerHTML = COMPANIES.slice(0,10).map(c => `
+    <tr onclick="showStockDetail('${c.name}')">
+      <td style="color:#c0cce0">${c.name}</td>
+      <td><span class="sector-badge">${c.sector}</span></td>
+      <td>₦${c.price.toFixed(2)}</td>
+      <td class="${c.chg>=0?'green':'red'}">${c.chg>=0?'+':''}${c.chg}%</td>
+    </tr>`).join('');
+  // Populate datalists
+  const opts = COMPANIES.map(c=>`<option value="${c.name}">`).join('');
+  document.getElementById('company-list').innerHTML = opts;
+  document.getElementById('company-list-2').innerHTML = opts;
+}
+
+// ===================== STOCK DETAIL =====================
+function showStockDetail(name) {
+  const stock = COMPANIES.find(c => c.name === name);
+  if (!stock) return;
+  currentDetailStock = stock;
+  document.getElementById('detail-name').textContent = stock.name;
+  document.getElementById('detail-sector').textContent = stock.sector;
+  document.getElementById('detail-price').textContent = '₦' + stock.price.toFixed(2);
+  document.getElementById('detail-change').innerHTML = `<span class="${stock.chg>=0?'green':'red'}">${stock.chg>=0?'+':''}${stock.chg}% today</span>`;
+  document.getElementById('detail-high').textContent = '₦' + (stock.price * 1.18).toFixed(2);
+  document.getElementById('detail-low').textContent = '₦' + (stock.price * 0.75).toFixed(2);
+  document.getElementById('detail-volume').textContent = (Math.random()*5+0.5).toFixed(1)+'M';
+  document.getElementById('detail-mktcap').textContent = '₦' + (stock.price * (Math.random()*800+200)).toFixed(0)+'M';
+
+  if (stockChartInstance) stockChartInstance.destroy();
+  const ctx = document.getElementById('stockChart').getContext('2d');
+  const base = stock.price;
+  const points = Array.from({length:30}, (_,i) => +(base*(0.85 + Math.random()*0.3)).toFixed(2));
+  points[29] = stock.price;
+  const labels = Array.from({length:30}, (_,i) => {
+    const d = new Date(); d.setDate(d.getDate()-29+i);
+    return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
+  });
+  stockChartInstance = new Chart(ctx, {
+    type:'line',
+    data: { labels, datasets:[{ data:points, borderColor:'#00d4aa', backgroundColor:'rgba(0,212,170,0.08)', fill:true, tension:0.4, pointRadius:1 }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{ x:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}}, y:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}} } }
+  });
+
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-stock').classList.add('active');
+}
+
+// ===================== SEARCH =====================
+document.getElementById('search-input').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  const results = document.getElementById('search-results');
+  if (q.length < 1) { results.style.display='none'; return; }
+  const matches = COMPANIES.filter(c => c.name.toLowerCase().includes(q));
+  if (matches.length === 0) { results.style.display='none'; return; }
+  results.style.display = 'block';
+  results.innerHTML = matches.map(c => `
+    <div class="search-result-item" onclick="showStockDetail('${c.name}'); document.getElementById('search-input').value=''; document.getElementById('search-results').style.display='none';">
+      <div><div class="search-result-name">${c.name}</div><div class="search-result-sector">${c.sector}</div></div>
+      <div class="${c.chg>=0?'green':'red'}" style="font-size:12px;">₦${c.price.toFixed(2)}</div>
+    </div>`).join('');
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-bar') && !e.target.closest('.search-results'))
+    document.getElementById('search-results').style.display='none';
+});
+
+// ===================== PORTFOLIO =====================
+function addToPortfolio() {
+  const name = document.getElementById('port-company').value;
+  const shares = parseFloat(document.getElementById('port-shares').value);
+  const buyPrice = parseFloat(document.getElementById('port-price').value);
+  if (!name || !shares || !buyPrice) { alert('Please fill all fields'); return; }
+  const stock = COMPANIES.find(c => c.name.toLowerCase() === name.toLowerCase()) || {name, sector:'Unknown', price: buyPrice};
+  portfolio.push({name: stock.name, sector: stock.sector, shares, buyPrice, currentPrice: stock.price});
+  document.getElementById('port-company').value = '';
+  document.getElementById('port-shares').value = '';
+  document.getElementById('port-price').value = '';
+  renderPortfolio();
+}
+
+function addToPortfolioFromDetail() {
+  if (!currentDetailStock) return;
+  showView('portfolio');
+  document.getElementById('port-company').value = currentDetailStock.name;
+  document.getElementById('port-price').value = currentDetailStock.price.toFixed(2);
+  document.getElementById('port-shares').focus();
+}
+
+function removePosition(i) {
+  portfolio.splice(i, 1);
+  renderPortfolio();
+}
+
+function renderPortfolio() {
+  if (portfolio.length === 0) {
+    document.getElementById('portfolio-table').innerHTML = '<tr><td colspan="8" style="color:#4a6fa5;text-align:center;padding:20px;">No positions yet.</td></tr>';
+    document.getElementById('portfolio-total').textContent = '₦0.00';
+    document.getElementById('total-invested').textContent = '₦0';
+    document.getElementById('current-value').textContent = '₦0';
+    document.getElementById('position-count').textContent = '0';
+    document.getElementById('portfolio-pnl').textContent = 'Total P&L: —';
+    return;
+  }
+  let totalInvested = 0, totalCurrent = 0;
+  document.getElementById('portfolio-table').innerHTML = portfolio.map((p,i) => {
+    const invested = p.shares * p.buyPrice;
+    const current = p.shares * p.currentPrice;
+    const pnl = current - invested;
+    const pnlPct = ((pnl/invested)*100).toFixed(1);
+    totalInvested += invested; totalCurrent += current;
+    return `<tr>
+      <td style="color:#c0cce0">${p.name}</td>
+      <td><span class="sector-badge">${p.sector}</span></td>
+      <td>${p.shares.toLocaleString()}</td>
+      <td>₦${p.buyPrice.toFixed(2)}</td>
+      <td>₦${p.currentPrice.toFixed(2)}</td>
+      <td>₦${current.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+      <td class="${pnl>=0?'green':'red'}">${pnl>=0?'+':''}₦${Math.abs(pnl).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})} (${pnlPct}%)</td>
+      <td><button class="btn-remove" onclick="removePosition(${i})">✕</button></td>
+    </tr>`;
+  }).join('');
+  const totalPnl = totalCurrent - totalInvested;
+  document.getElementById('portfolio-total').textContent = '₦' + totalCurrent.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('total-invested').textContent = '₦' + totalInvested.toLocaleString();
+  document.getElementById('current-value').textContent = '₦' + totalCurrent.toLocaleString();
+  document.getElementById('position-count').textContent = portfolio.length;
+  document.getElementById('portfolio-pnl').innerHTML = `Total P&L: <span class="${totalPnl>=0?'green':'red'}">${totalPnl>=0?'+':''}₦${Math.abs(totalPnl).toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>`;
+}
+
+// ===================== ALERTS =====================
+function addAlert() {
+  const company = document.getElementById('alert-company').value;
+  const condition = document.getElementById('alert-condition').value;
+  const targetPrice = parseFloat(document.getElementById('alert-price').value);
+  if (!company || !targetPrice) { alert('Please fill all fields'); return; }
+  const stock = COMPANIES.find(c => c.name.toLowerCase() === company.toLowerCase());
+  const currentPrice = stock ? stock.price : null;
+  alerts.push({company, condition, targetPrice, currentPrice, triggered: false, createdAt: new Date().toLocaleTimeString()});
+  document.getElementById('alert-company').value = '';
+  document.getElementById('alert-price').value = '';
+  renderAlerts();
+  checkAlerts();
+}
+
+function setAlertFromDetail() {
+  if (!currentDetailStock) return;
+  showView('alerts');
+  document.getElementById('alert-company').value = currentDetailStock.name;
+  document.getElementById('alert-price').focus();
+}
+
+function removeAlert(i) { alerts.splice(i,1); renderAlerts(); }
+
+function renderAlerts() {
+  if (alerts.length === 0) {
+    document.getElementById('alerts-list').innerHTML = '<div style="color:#4a6fa5;text-align:center;padding:30px;">No alerts set.</div>';
+    return;
+  }
+  document.getElementById('alerts-list').innerHTML = alerts.map((a,i) => `
+    <div class="alert-item ${a.triggered?'alert-triggered':''}">
+      <div>
+        <div style="color:#c0cce0;font-size:14px;font-weight:bold;">${a.company}</div>
+        <div style="color:#4a6fa5;font-size:11px;margin-top:3px;">
+          Alert when price goes <strong style="color:#e0e6f0">${a.condition.toUpperCase()}</strong> 
+          <strong style="color:#00d4aa">₦${a.targetPrice.toFixed(2)}</strong>
+          ${a.currentPrice ? `· Current: ₦${a.currentPrice.toFixed(2)}` : ''}
+        </div>
+        <div style="color:#2a4a6f;font-size:10px;margin-top:2px;">Set at ${a.createdAt}</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <span class="alert-badge ${a.triggered?'badge-triggered':'badge-active'}">${a.triggered?'✓ TRIGGERED':'● ACTIVE'}</span>
+        <button class="btn-remove" onclick="removeAlert(${i})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function checkAlerts() {
+  alerts.forEach(a => {
+    const stock = COMPANIES.find(c => c.name === a.company);
+    if (!stock) return;
+    if (a.condition === 'above' && stock.price > a.targetPrice) a.triggered = true;
+    if (a.condition === 'below' && stock.price < a.targetPrice) a.triggered = true;
+  });
+  renderAlerts();
+}
+
+// ===================== CHARTS =====================
+function drawIndexChart() {
+  const ctx = document.getElementById('indexChart').getContext('2d');
+  new Chart(ctx, {
+    type:'line',
+    data:{ labels:['09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00'],
+      datasets:[{data:[97200,97380,97290,97520,97610,97480,97750,97842],borderColor:'#00d4aa',backgroundColor:'rgba(0,212,170,0.1)',fill:true,tension:0.4,pointRadius:2}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:'#4a6fa5',font:{size:10}},grid:{color:'#0f1829'}},y:{ticks:{color:'#4a6fa5',font:{size:10}},grid:{color:'#0f1829'}}}}
+  });
+}
+
+function drawSectorChart() {
+  const ctx = document.getElementById('sectorChart').getContext('2d');
+  new Chart(ctx, {
+    type:'doughnut',
+    data:{labels:['Financials','Consumer Goods','Industrials','Technology','Healthcare','Other'],
+      datasets:[{data:[35,22,18,10,8,7],backgroundColor:['#00d4aa','#0088ff','#ff6600','#ff00aa','#ffcc00','#4a6fa5'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#6b8cba',font:{size:10},boxWidth:12}}}}
+  });
+}
+
+// ===================== INIT =====================
+loadFX();
+loadCompanies();
+drawIndexChart();
+drawSectorChart();
+setInterval(loadFX, 60000);
+setInterval(checkAlerts, 30000);
+</script>
+</body>
+</html>
