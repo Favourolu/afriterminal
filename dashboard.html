@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -6,157 +7,112 @@
 <title>AfriTerminal — African Markets Intelligence</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body { background: #0a0e1a; color: #e0e6f0; font-family: -apple-system, 'Courier New', monospace; overflow-x: hidden; }
-  .topbar { background: #0d1224; border-bottom: 1px solid #1e3a5f; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 200; }
-  .logo { color: #00d4aa; font-size: 18px; font-weight: bold; letter-spacing: 2px; }
-  .tagline { color: #4a6fa5; font-size: 10px; }
-  .live-badge { background: #00d4aa; color: #0a0e1a; padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: bold; }
-  .fx-ticker { background: #060910; border-bottom: 1px solid #1e3a5f; padding: 8px 16px; display: flex; gap: 20px; overflow-x: auto; scrollbar-width: none; }
-  .fx-ticker::-webkit-scrollbar { display: none; }
-  .fx-item { display: flex; gap: 6px; align-items: center; white-space: nowrap; }
-  .fx-label { color: #4a6fa5; font-size: 10px; }
-  .fx-value { color: #00d4aa; font-size: 12px; font-weight: bold; }
-  .search-container { padding: 10px 16px; background: #0d1224; border-bottom: 1px solid #1e3a5f; position: relative; }
-  .search-bar { background: #060910; border: 1px solid #1e3a5f; border-radius: 8px; display: flex; align-items: center; padding: 8px 12px; gap: 8px; }
-  .search-bar input { background: none; border: none; color: #e0e6f0; font-size: 14px; outline: none; width: 100%; }
-  .search-bar input::placeholder { color: #2a4a6f; }
-  .search-results { position: absolute; left: 16px; right: 16px; top: 58px; background: #0d1224; border: 1px solid #1e3a5f; border-radius: 8px; z-index: 100; max-height: 250px; overflow-y: auto; display: none; }
-  .search-result-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #0f1829; display: flex; justify-content: space-between; align-items: center; }
-  .search-result-item:active { background: #111827; }
-  .search-result-name { color: #c0cce0; font-size: 13px; }
-  .search-result-sector { color: #4a6fa5; font-size: 11px; margin-top: 2px; }
-
-  /* TABS */
-  .tab-bar { background: #0d1224; border-bottom: 1px solid #1e3a5f; display: flex; overflow-x: auto; scrollbar-width: none; }
-  .tab-bar::-webkit-scrollbar { display: none; }
-  .tab { padding: 10px 16px; font-size: 11px; cursor: pointer; color: #4a6fa5; white-space: nowrap; border-bottom: 2px solid transparent; letter-spacing: 0.5px; }
-  .tab.active { color: #00d4aa; border-bottom: 2px solid #00d4aa; }
-
-  .view { display: none; padding-bottom: 80px; }
-  .view.active { display: block; }
-  .sub-view { display: none; }
-  .sub-view.active { display: block; }
-
-  .card { background: #0d1224; border: 1px solid #1e3a5f; border-radius: 12px; padding: 14px; margin: 10px 16px; }
-  .card-title { color: #4a6fa5; font-size: 10px; letter-spacing: 1px; margin-bottom: 10px; }
-  .stat-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 16px 0; }
-  .stat-box { background: #0d1224; border: 1px solid #1e3a5f; border-radius: 10px; padding: 12px; }
-  .stat-label { color: #4a6fa5; font-size: 9px; margin-bottom: 4px; letter-spacing: 0.5px; }
-  .stat-value { color: #00d4aa; font-size: 20px; font-weight: bold; }
-  .stat-sub { color: #6b8cba; font-size: 10px; margin-top: 2px; }
-  .section-title { color: #4a6fa5; font-size: 10px; letter-spacing: 1px; padding: 12px 16px 6px; }
-  .chart-container { height: 180px; position: relative; }
-
-  /* STOCK ROWS */
-  .stock-row { background: #0d1224; border: 1px solid #1e3a5f; border-radius: 10px; padding: 12px 14px; margin: 0 16px 8px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-  .stock-row:active { background: #111827; }
-  .stock-row-name { color: #c0cce0; font-size: 13px; font-weight: bold; }
-  .stock-row-sector { color: #4a6fa5; font-size: 10px; margin-top: 2px; }
-  .stock-row-price { color: #e0e6f0; font-size: 15px; font-weight: bold; text-align:right; }
-  .stock-row-chg { font-size: 11px; margin-top: 2px; text-align:right; }
-
-  /* CRYPTO */
-  .crypto-row { background: #0d1224; border: 1px solid #1e3a5f; border-radius: 10px; padding: 14px; margin: 0 16px 8px; display: flex; justify-content: space-between; align-items: center; }
-  .crypto-symbol { color: #00d4aa; font-size: 16px; font-weight: bold; }
-  .crypto-name { color: #4a6fa5; font-size: 11px; margin-top: 2px; }
-  .crypto-usd { color: #e0e6f0; font-size: 15px; font-weight: bold; text-align:right; }
-  .crypto-ngn { color: #4a6fa5; font-size: 11px; text-align:right; margin-top: 2px; }
-  .crypto-chg { font-size: 12px; text-align:right; margin-top: 2px; }
-
-  /* COMMODITIES */
-  .commodity-row { background: #0d1224; border: 1px solid #1e3a5f; border-radius: 10px; padding: 14px; margin: 0 16px 8px; display: flex; justify-content: space-between; align-items: center; }
-  .commodity-name { color: #c0cce0; font-size: 14px; font-weight: bold; }
-  .commodity-unit { color: #4a6fa5; font-size: 10px; margin-top: 2px; }
-  .commodity-price { color: #e0e6f0; font-size: 16px; font-weight: bold; text-align:right; }
-  .commodity-chg { font-size: 12px; text-align:right; margin-top: 2px; }
-
-  /* MACRO */
-  .country-card { background: #0d1224; border: 1px solid #1e3a5f; border-radius: 12px; padding: 14px; margin: 0 16px 10px; }
-  .country-name { color: #00d4aa; font-size: 15px; font-weight: bold; margin-bottom: 10px; }
-  .macro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .macro-item { background: #060910; border-radius: 8px; padding: 8px; }
-  .macro-label { color: #4a6fa5; font-size: 9px; }
-  .macro-value { color: #e0e6f0; font-size: 14px; font-weight: bold; margin-top: 2px; }
-  .macro-year { color: #2a4a6f; font-size: 9px; }
-
-  /* EXCHANGE TABS */
-  .exchange-tab-bar { display: flex; gap: 8px; padding: 10px 16px; overflow-x: auto; scrollbar-width: none; }
-  .exchange-tab-bar::-webkit-scrollbar { display: none; }
-  .exchange-tab { background: #0d1224; border: 1px solid #1e3a5f; border-radius: 20px; padding: 6px 14px; font-size: 11px; color: #4a6fa5; cursor: pointer; white-space: nowrap; }
-  .exchange-tab.active { background: #00d4aa22; border-color: #00d4aa; color: #00d4aa; }
-
-  /* FX ROWS */
-  .fx-row { background: #0d1224; border: 1px solid #1e3a5f; border-radius: 10px; padding: 12px 14px; margin: 0 16px 8px; display: flex; justify-content: space-between; align-items: center; }
-  .fx-flag { font-size: 22px; margin-right: 10px; }
-  .fx-currency { color: #c0cce0; font-size: 13px; font-weight: bold; }
-  .fx-country-name { color: #4a6fa5; font-size: 10px; }
-  .fx-rate-big { color: #00d4aa; font-size: 16px; font-weight: bold; }
-
-  /* DETAIL */
-  .detail-view { padding: 16px; padding-bottom: 80px; }
-  .back-btn { background: #1e3a5f; color: #00d4aa; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; margin-bottom: 16px; }
-  .detail-name { font-size: 22px; color: #00d4aa; font-weight: bold; margin-bottom: 4px; }
-  .detail-sector-tag { background: #1e3a5f; color: #6b8cba; padding: 3px 10px; border-radius: 6px; font-size: 11px; display: inline-block; margin-bottom: 16px; }
-  .detail-price { font-size: 38px; color: #e0e6f0; font-weight: bold; }
-  .detail-change { font-size: 16px; margin-top: 4px; margin-bottom: 16px; }
-  .detail-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-  .detail-stat { background: #0d1224; border: 1px solid #1e3a5f; border-radius: 10px; padding: 12px; }
-  .detail-chart { background: #0d1224; border: 1px solid #1e3a5f; border-radius: 12px; padding: 14px; height: 220px; position: relative; margin-bottom: 16px; }
-  .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .btn-primary { background: #00d4aa; color: #0a0e1a; border: none; padding: 14px; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; }
-  .btn-secondary { background: #1e3a5f; color: #00d4aa; border: none; padding: 14px; border-radius: 10px; font-size: 14px; cursor: pointer; }
-
-  /* PORTFOLIO */
-  .portfolio-total-card { background: linear-gradient(135deg, #0d1224, #1e3a5f); border: 1px solid #00d4aa33; border-radius: 16px; padding: 20px; margin: 10px 16px; }
-  .portfolio-total-label { color: #4a6fa5; font-size: 11px; margin-bottom: 6px; }
-  .portfolio-total-value { color: #00d4aa; font-size: 32px; font-weight: bold; }
-  .add-form { margin: 0 16px 16px; background: #0d1224; border: 1px solid #1e3a5f; border-radius: 12px; padding: 14px; }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-  .form-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
-  .form-label { color: #4a6fa5; font-size: 10px; }
-  .form-input { background: #060910; border: 1px solid #1e3a5f; color: #e0e6f0; padding: 10px 12px; border-radius: 8px; font-size: 14px; outline: none; width: 100%; }
-  .form-input:focus { border-color: #00d4aa; }
-  .btn-full { background: #00d4aa; color: #0a0e1a; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; width: 100%; }
-  .position-card { background: #0d1224; border: 1px solid #1e3a5f; border-radius: 12px; padding: 14px; margin: 0 16px 10px; }
-  .position-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
-  .position-name { color: #c0cce0; font-size: 14px; font-weight: bold; }
-  .position-bottom { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .position-stat { text-align: center; }
-  .position-stat-label { color: #4a6fa5; font-size: 9px; }
-  .position-stat-value { color: #e0e6f0; font-size: 13px; font-weight: bold; margin-top: 2px; }
-  .btn-remove-small { background: none; border: 1px solid #ff444455; color: #ff4444; padding: 4px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; }
-
-  /* ALERTS */
-  .alert-card { background: #0d1224; border: 1px solid #1e3a5f; border-radius: 12px; padding: 14px; margin: 0 16px 10px; }
-  .alert-card.triggered { border-color: #00ff8855; background: #00ff880a; }
-  .badge { padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: bold; }
-  .badge-active { background: #1e3a5f; color: #4a6fa5; }
-  .badge-triggered { background: #00ff8822; color: #00ff88; }
-
-  /* NEWS */
-  .news-card { background: #0d1224; border: 1px solid #1e3a5f; border-radius: 10px; padding: 12px 14px; margin: 0 16px 8px; }
-  .news-time { color: #4a6fa5; font-size: 10px; }
-  .news-headline { color: #c0cce0; font-size: 13px; margin-top: 4px; line-height: 1.4; }
-  .news-source { color: #00d4aa; font-size: 10px; margin-top: 4px; }
-
-  .green { color: #00ff88; }
-  .red { color: #ff4444; }
-
-  /* BOTTOM NAV */
-  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 200; background: #0d1224; border-top: 1px solid #1e3a5f; display: flex; justify-content: space-around; padding: 8px 0 12px; }
-  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 12px; flex: 1; }
-  .nav-icon { font-size: 20px; }
-  .nav-label { font-size: 9px; color: #4a6fa5; letter-spacing: 0.5px; }
-  .nav-item.active .nav-label { color: #00d4aa; }
-
-  @media (min-width: 768px) {
-    .stat-grid-2 { grid-template-columns: repeat(4, 1fr); margin: 10px 24px 0; }
-    .card, .stock-row, .fx-row, .crypto-row, .commodity-row, .country-card, .add-form, .position-card, .alert-card, .news-card { margin-left: 24px; margin-right: 24px; }
-    .exchange-tab-bar { padding: 10px 24px; }
-    .detail-view { max-width: 700px; margin: 0 auto; }
-    .detail-stats { grid-template-columns: repeat(4, 1fr); }
-  }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#0a0e1a;color:#e0e6f0;font-family:-apple-system,'Courier New',monospace;overflow-x:hidden}
+.topbar{background:#0d1224;border-bottom:1px solid #1e3a5f;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:200}
+.logo{color:#00d4aa;font-size:18px;font-weight:bold;letter-spacing:2px}
+.tagline{color:#4a6fa5;font-size:10px}
+.live-badge{background:#00d4aa;color:#0a0e1a;padding:3px 8px;border-radius:3px;font-size:10px;font-weight:bold}
+.fx-ticker{background:#060910;border-bottom:1px solid #1e3a5f;padding:8px 16px;display:flex;gap:20px;overflow-x:auto;scrollbar-width:none}
+.fx-ticker::-webkit-scrollbar{display:none}
+.fx-item{display:flex;gap:6px;align-items:center;white-space:nowrap}
+.fx-label{color:#4a6fa5;font-size:10px}
+.fx-value{color:#00d4aa;font-size:12px;font-weight:bold}
+.search-container{padding:10px 16px;background:#0d1224;border-bottom:1px solid #1e3a5f;position:relative}
+.search-bar{background:#060910;border:1px solid #1e3a5f;border-radius:8px;display:flex;align-items:center;padding:8px 12px;gap:8px}
+.search-bar input{background:none;border:none;color:#e0e6f0;font-size:14px;outline:none;width:100%}
+.search-bar input::placeholder{color:#2a4a6f}
+.search-results{position:absolute;left:16px;right:16px;top:58px;background:#0d1224;border:1px solid #1e3a5f;border-radius:8px;z-index:100;max-height:250px;overflow-y:auto;display:none}
+.search-result-item{padding:12px 16px;cursor:pointer;border-bottom:1px solid #0f1829;display:flex;justify-content:space-between;align-items:center}
+.search-result-item:active{background:#111827}
+.search-result-name{color:#c0cce0;font-size:13px}
+.search-result-sector{color:#4a6fa5;font-size:11px;margin-top:2px}
+.tab-bar{background:#0d1224;border-bottom:1px solid #1e3a5f;display:flex;overflow-x:auto;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab{padding:10px 16px;font-size:11px;cursor:pointer;color:#4a6fa5;white-space:nowrap;border-bottom:2px solid transparent;letter-spacing:.5px}
+.tab.active{color:#00d4aa;border-bottom:2px solid #00d4aa}
+.view{display:none;padding-bottom:80px}
+.view.active{display:block}
+.sub-view{display:none}
+.sub-view.active{display:block}
+.card{background:#0d1224;border:1px solid #1e3a5f;border-radius:12px;padding:14px;margin:10px 16px}
+.card-title{color:#4a6fa5;font-size:10px;letter-spacing:1px;margin-bottom:10px}
+.stat-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 16px 0}
+.stat-box{background:#0d1224;border:1px solid #1e3a5f;border-radius:10px;padding:12px}
+.stat-label{color:#4a6fa5;font-size:9px;margin-bottom:4px;letter-spacing:.5px}
+.stat-value{color:#00d4aa;font-size:20px;font-weight:bold}
+.stat-sub{color:#6b8cba;font-size:10px;margin-top:2px}
+.section-title{color:#4a6fa5;font-size:10px;letter-spacing:1px;padding:12px 16px 6px}
+.chart-container{height:180px;position:relative}
+.stock-row{background:#0d1224;border:1px solid #1e3a5f;border-radius:10px;padding:12px 14px;margin:0 16px 8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.stock-row:active{background:#111827}
+.stock-name{color:#c0cce0;font-size:13px;font-weight:bold}
+.stock-sector{color:#4a6fa5;font-size:10px;margin-top:2px}
+.stock-price{color:#e0e6f0;font-size:15px;font-weight:bold;text-align:right}
+.stock-chg{font-size:11px;margin-top:2px;text-align:right}
+.crypto-row{background:#0d1224;border:1px solid #1e3a5f;border-radius:10px;padding:14px;margin:0 16px 8px;display:flex;justify-content:space-between;align-items:center}
+.commodity-row{background:#0d1224;border:1px solid #1e3a5f;border-radius:10px;padding:14px;margin:0 16px 8px;display:flex;justify-content:space-between;align-items:center}
+.country-card{background:#0d1224;border:1px solid #1e3a5f;border-radius:12px;padding:14px;margin:0 16px 10px}
+.country-name{color:#00d4aa;font-size:15px;font-weight:bold;margin-bottom:10px}
+.macro-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.macro-item{background:#060910;border-radius:8px;padding:8px}
+.macro-label{color:#4a6fa5;font-size:9px}
+.macro-value{color:#e0e6f0;font-size:14px;font-weight:bold;margin-top:2px}
+.macro-year{color:#2a4a6f;font-size:9px}
+.exchange-tab-bar{display:flex;gap:8px;padding:10px 16px;overflow-x:auto;scrollbar-width:none}
+.exchange-tab-bar::-webkit-scrollbar{display:none}
+.exchange-tab{background:#0d1224;border:1px solid #1e3a5f;border-radius:20px;padding:6px 14px;font-size:11px;color:#4a6fa5;cursor:pointer;white-space:nowrap}
+.exchange-tab.active{background:#00d4aa22;border-color:#00d4aa;color:#00d4aa}
+.fx-row{background:#0d1224;border:1px solid #1e3a5f;border-radius:10px;padding:12px 14px;margin:0 16px 8px;display:flex;justify-content:space-between;align-items:center}
+.news-card{background:#0d1224;border:1px solid #1e3a5f;border-radius:10px;padding:12px 14px;margin:0 16px 8px}
+.news-time{color:#4a6fa5;font-size:10px}
+.news-headline{color:#c0cce0;font-size:13px;margin-top:4px;line-height:1.4}
+.news-source{color:#00d4aa;font-size:10px;margin-top:4px}
+.detail-view{padding:16px;padding-bottom:80px}
+.back-btn{background:#1e3a5f;color:#00d4aa;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;margin-bottom:16px}
+.detail-name{font-size:22px;color:#00d4aa;font-weight:bold;margin-bottom:4px}
+.detail-sector-tag{background:#1e3a5f;color:#6b8cba;padding:3px 10px;border-radius:6px;font-size:11px;display:inline-block;margin-bottom:16px}
+.detail-price{font-size:38px;color:#e0e6f0;font-weight:bold}
+.detail-change{font-size:16px;margin-top:4px;margin-bottom:16px}
+.detail-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.detail-stat{background:#0d1224;border:1px solid #1e3a5f;border-radius:10px;padding:12px}
+.detail-chart{background:#0d1224;border:1px solid #1e3a5f;border-radius:12px;padding:14px;height:220px;position:relative;margin-bottom:16px}
+.action-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-primary{background:#00d4aa;color:#0a0e1a;border:none;padding:14px;border-radius:10px;font-size:14px;font-weight:bold;cursor:pointer}
+.btn-secondary{background:#1e3a5f;color:#00d4aa;border:none;padding:14px;border-radius:10px;font-size:14px;cursor:pointer}
+.portfolio-total-card{background:linear-gradient(135deg,#0d1224,#1e3a5f);border:1px solid #00d4aa33;border-radius:16px;padding:20px;margin:10px 16px}
+.add-form{margin:0 16px 16px;background:#0d1224;border:1px solid #1e3a5f;border-radius:12px;padding:14px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.form-group{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.form-label{color:#4a6fa5;font-size:10px}
+.form-input{background:#060910;border:1px solid #1e3a5f;color:#e0e6f0;padding:10px 12px;border-radius:8px;font-size:14px;outline:none;width:100%}
+.form-input:focus{border-color:#00d4aa}
+.btn-full{background:#00d4aa;color:#0a0e1a;border:none;padding:12px;border-radius:10px;font-size:14px;font-weight:bold;cursor:pointer;width:100%}
+.position-card{background:#0d1224;border:1px solid #1e3a5f;border-radius:12px;padding:14px;margin:0 16px 10px}
+.position-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.position-bottom{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.position-stat{text-align:center}
+.position-stat-label{color:#4a6fa5;font-size:9px}
+.position-stat-value{color:#e0e6f0;font-size:13px;font-weight:bold;margin-top:2px}
+.btn-remove{background:none;border:1px solid #ff444455;color:#ff4444;padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer}
+.alert-card{background:#0d1224;border:1px solid #1e3a5f;border-radius:12px;padding:14px;margin:0 16px 10px}
+.alert-card.triggered{border-color:#00ff8855;background:#00ff880a}
+.badge{padding:3px 10px;border-radius:6px;font-size:10px;font-weight:bold}
+.badge-active{background:#1e3a5f;color:#4a6fa5}
+.badge-triggered{background:#00ff8822;color:#00ff88}
+.green{color:#00ff88}
+.red{color:#ff4444}
+.loading{color:#4a6fa5;text-align:center;padding:20px;font-size:13px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:#0d1224;border-top:1px solid #1e3a5f;display:flex;justify-content:space-around;padding:8px 0 12px}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 12px;flex:1}
+.nav-icon{font-size:20px}
+.nav-label{font-size:9px;color:#4a6fa5;letter-spacing:.5px}
+.nav-item.active .nav-label{color:#00d4aa}
+@media(min-width:768px){
+  .stat-grid-2{grid-template-columns:repeat(4,1fr);margin:10px 24px 0}
+  .card,.stock-row,.fx-row,.crypto-row,.commodity-row,.country-card,.add-form,.position-card,.alert-card,.news-card{margin-left:24px;margin-right:24px}
+  .exchange-tab-bar{padding:10px 24px}
+}
 </style>
 </head>
 <body>
@@ -166,8 +122,8 @@
     <div class="logo">⚡ AFRITERMINAL</div>
     <div class="tagline">African Capital Markets Intelligence</div>
   </div>
-  <div style="display:flex;gap:10px;align-items:center;">
-    <span style="color:#4a6fa5;font-size:10px;" id="clock"></span>
+  <div style="display:flex;gap:10px;align-items:center">
+    <span style="color:#4a6fa5;font-size:10px" id="clock"></span>
     <span class="live-badge">● LIVE</span>
   </div>
 </div>
@@ -184,25 +140,25 @@
   <div class="search-results" id="search-results"></div>
 </div>
 
-<!-- MAIN TAB BAR -->
-<div class="tab-bar">
-  <div class="tab active" onclick="showMainTab('markets')">📊 MARKETS</div>
-  <div class="tab" onclick="showMainTab('crypto')">₿ CRYPTO</div>
-  <div class="tab" onclick="showMainTab('commodities')">🛢️ COMMODITIES</div>
-  <div class="tab" onclick="showMainTab('exchanges')">🌍 AFRICA</div>
-  <div class="tab" onclick="showMainTab('macro')">📈 MACRO</div>
-  <div class="tab" onclick="showMainTab('fx')">💱 FX</div>
+<div class="tab-bar" id="main-tab-bar">
+  <div class="tab active" onclick="showMainTab('markets',this)">📊 MARKETS</div>
+  <div class="tab" onclick="showMainTab('crypto',this)">₿ CRYPTO</div>
+  <div class="tab" onclick="showMainTab('commodities',this)">🛢️ COMMODITIES</div>
+  <div class="tab" onclick="showMainTab('exchanges',this)">🌍 AFRICA</div>
+  <div class="tab" onclick="showMainTab('macro',this)">📈 MACRO</div>
+  <div class="tab" onclick="showMainTab('fx',this)">💱 FX</div>
 </div>
 
-<!-- MARKETS TAB -->
+<!-- MARKETS -->
+
 <div id="tab-markets" class="view active">
-  <div class="stat-grid-2" style="padding-top:10px;">
+  <div class="stat-grid-2" style="padding-top:10px">
     <div class="stat-box"><div class="stat-label">ALL-SHARE INDEX</div><div class="stat-value">97,842</div><div class="stat-sub green">+0.43%</div></div>
-    <div class="stat-box"><div class="stat-label">NGN/USD</div><div class="stat-value" id="ngn-rate" style="font-size:16px;">—</div><div class="stat-sub">Live</div></div>
-    <div class="stat-box"><div class="stat-label">MARKET CAP</div><div class="stat-value" style="font-size:16px;">$53.3B</div><div class="stat-sub">NGX</div></div>
-    <div class="stat-box"><div class="stat-label">BRENT CRUDE</div><div class="stat-value" id="oil-price" style="font-size:16px;">—</div><div class="stat-sub">USD/bbl</div></div>
+    <div class="stat-box"><div class="stat-label">NGN/USD</div><div class="stat-value" id="ngn-rate" style="font-size:16px">—</div><div class="stat-sub">Live</div></div>
+    <div class="stat-box"><div class="stat-label">MARKET CAP</div><div class="stat-value" style="font-size:16px">$53.3B</div><div class="stat-sub">NGX</div></div>
+    <div class="stat-box"><div class="stat-label">BRENT CRUDE</div><div class="stat-value" id="oil-price" style="font-size:16px">—</div><div class="stat-sub">USD/bbl</div></div>
   </div>
-  <div class="card" style="margin-top:14px;">
+  <div class="card" style="margin-top:14px">
     <div class="card-title">▶ NGX INDEX TODAY</div>
     <div class="chart-container"><canvas id="indexChart"></canvas></div>
   </div>
@@ -215,69 +171,74 @@
   <div class="news-card"><div class="news-time">10 MAR 2026 · 15:00</div><div class="news-headline">African fintech funding up 40% in H1 2025 — Partech report</div><div class="news-source">AFRICAN MARKETS</div></div>
 </div>
 
-<!-- CRYPTO TAB -->
+<!-- CRYPTO -->
+
 <div id="tab-crypto" class="view">
-  <div class="stat-grid-2" style="padding-top:10px;">
-    <div class="stat-box"><div class="stat-label">BITCOIN (NGN)</div><div class="stat-value" id="btc-ngn" style="font-size:14px;">—</div><div class="stat-sub" id="btc-chg">Loading...</div></div>
-    <div class="stat-box"><div class="stat-label">ETHEREUM (NGN)</div><div class="stat-value" id="eth-ngn" style="font-size:14px;">—</div><div class="stat-sub" id="eth-chg">Loading...</div></div>
+  <div class="stat-grid-2" style="padding-top:10px">
+    <div class="stat-box"><div class="stat-label">BITCOIN (NGN)</div><div class="stat-value" id="btc-ngn" style="font-size:14px">—</div><div class="stat-sub" id="btc-chg">Loading...</div></div>
+    <div class="stat-box"><div class="stat-label">ETHEREUM (NGN)</div><div class="stat-value" id="eth-ngn" style="font-size:14px">—</div><div class="stat-sub" id="eth-chg">Loading...</div></div>
   </div>
-  <div class="card" style="margin-top:14px;">
-    <div class="card-title">▶ BITCOIN 7-DAY TREND (USD)</div>
+  <div class="card" style="margin-top:14px">
+    <div class="card-title">▶ BITCOIN 7-DAY TREND</div>
     <div class="chart-container"><canvas id="cryptoChart"></canvas></div>
   </div>
   <div class="section-title">▶ LIVE CRYPTO PRICES</div>
-  <div id="crypto-list"><div style="color:#4a6fa5;text-align:center;padding:20px;">Loading crypto data...</div></div>
+  <div id="crypto-list"><div class="loading">Loading crypto data...</div></div>
 </div>
 
-<!-- COMMODITIES TAB -->
+<!-- COMMODITIES -->
+
 <div id="tab-commodities" class="view">
-  <div class="card" style="margin-top:10px;">
+  <div class="card" style="margin-top:10px">
     <div class="card-title">▶ WHY COMMODITIES MATTER FOR AFRICA</div>
-    <div style="color:#6b8cba;font-size:12px;line-height:1.6;">Nigeria exports crude oil · Ghana exports gold & cocoa · Ethiopia exports coffee · These prices directly impact African currencies and stock markets.</div>
+    <div style="color:#6b8cba;font-size:12px;line-height:1.6">Nigeria exports crude oil · Ghana exports gold & cocoa · Ethiopia exports coffee · These prices directly impact African currencies and stock markets.</div>
   </div>
-  <div class="section-title">▶ LIVE COMMODITY PRICES</div>
-  <div id="commodity-list"><div style="color:#4a6fa5;text-align:center;padding:20px;">Loading commodity data...</div></div>
+  <div class="section-title">▶ COMMODITY PRICES</div>
+  <div id="commodity-list"><div class="loading">Loading commodity data...</div></div>
 </div>
 
-<!-- AFRICAN EXCHANGES TAB -->
+<!-- AFRICA EXCHANGES -->
+
 <div id="tab-exchanges" class="view">
   <div class="exchange-tab-bar">
-    <div class="exchange-tab active" onclick="showExchange('ngx')">🇳🇬 NGX</div>
-    <div class="exchange-tab" onclick="showExchange('gse')">🇬🇭 Ghana</div>
-    <div class="exchange-tab" onclick="showExchange('nse')">🇰🇪 Kenya</div>
-    <div class="exchange-tab" onclick="showExchange('egx')">🇪🇬 Egypt</div>
+    <div class="exchange-tab active" onclick="showExchange('ngx',this)">🇳🇬 NGX</div>
+    <div class="exchange-tab" onclick="showExchange('gse',this)">🇬🇭 Ghana</div>
+    <div class="exchange-tab" onclick="showExchange('nse',this)">🇰🇪 Kenya</div>
+    <div class="exchange-tab" onclick="showExchange('egx',this)">🇪🇬 Egypt</div>
   </div>
   <div id="exchange-ngx" class="sub-view active">
-    <div class="section-title">▶ NIGERIA (NGX) — 191 SECURITIES</div>
+    <div class="section-title">▶ NIGERIA (NGX)</div>
     <div id="ngx-list"></div>
   </div>
   <div id="exchange-gse" class="sub-view">
     <div class="section-title">▶ GHANA STOCK EXCHANGE (GSE)</div>
-    <div id="gse-list"><div style="color:#4a6fa5;text-align:center;padding:20px;">Loading Ghana data...</div></div>
+    <div id="gse-list"><div class="loading">Loading Ghana data...</div></div>
   </div>
   <div id="exchange-nse" class="sub-view">
     <div class="section-title">▶ NAIROBI SECURITIES EXCHANGE (NSE)</div>
-    <div id="nse-list"><div style="color:#4a6fa5;text-align:center;padding:20px;">Loading Kenya data...</div></div>
+    <div id="nse-list"><div class="loading">Loading Kenya data...</div></div>
   </div>
   <div id="exchange-egx" class="sub-view">
     <div class="section-title">▶ EGYPT STOCK EXCHANGE (EGX)</div>
-    <div id="egx-list"><div style="color:#4a6fa5;text-align:center;padding:20px;">Loading Egypt data...</div></div>
+    <div id="egx-list"><div class="loading">Loading Egypt data...</div></div>
   </div>
 </div>
 
-<!-- MACRO TAB -->
+<!-- MACRO -->
+
 <div id="tab-macro" class="view">
-  <div class="card" style="margin-top:10px;">
-    <div class="card-title">▶ ABOUT THIS DATA</div>
-    <div style="color:#6b8cba;font-size:12px;line-height:1.6;">Macroeconomic indicators sourced from the World Bank Open Data API. Updated annually. Essential for institutional investors and DFIs.</div>
+  <div class="card" style="margin-top:10px">
+    <div class="card-title">▶ WORLD BANK MACROECONOMIC DATA</div>
+    <div style="color:#6b8cba;font-size:12px;line-height:1.6">Key economic indicators for Africa's major economies. Updated annually from World Bank Open Data.</div>
   </div>
-  <div class="section-title">▶ COUNTRY ECONOMIC PROFILES</div>
-  <div id="macro-list"><div style="color:#4a6fa5;text-align:center;padding:20px;">Loading macro data...</div></div>
+  <div class="section-title">▶ COUNTRY PROFILES</div>
+  <div id="macro-list"><div class="loading">Loading macro data...</div></div>
 </div>
 
-<!-- FX TAB -->
+<!-- FX -->
+
 <div id="tab-fx" class="view">
-  <div class="card" style="margin-top:10px;">
+  <div class="card" style="margin-top:10px">
     <div class="card-title">▶ FX RATES vs USD — LIVE</div>
     <div class="chart-container"><canvas id="fxChart"></canvas></div>
   </div>
@@ -286,6 +247,7 @@
 </div>
 
 <!-- STOCK DETAIL -->
+
 <div id="view-stock" class="view">
   <div class="detail-view">
     <button class="back-btn" onclick="hideStockDetail()">← Back</button>
@@ -294,10 +256,10 @@
     <div class="detail-price" id="detail-price">—</div>
     <div class="detail-change" id="detail-change">—</div>
     <div class="detail-stats">
-      <div class="detail-stat"><div class="stat-label">52W HIGH</div><div class="stat-value" id="detail-high" style="font-size:15px;">—</div></div>
-      <div class="detail-stat"><div class="stat-label">52W LOW</div><div class="stat-value" id="detail-low" style="font-size:15px;">—</div></div>
-      <div class="detail-stat"><div class="stat-label">VOLUME</div><div class="stat-value" id="detail-vol" style="font-size:15px;">—</div></div>
-      <div class="detail-stat"><div class="stat-label">MKT CAP</div><div class="stat-value" id="detail-cap" style="font-size:15px;">—</div></div>
+      <div class="detail-stat"><div class="stat-label">52W HIGH</div><div class="stat-value" id="detail-high" style="font-size:15px">—</div></div>
+      <div class="detail-stat"><div class="stat-label">52W LOW</div><div class="stat-value" id="detail-low" style="font-size:15px">—</div></div>
+      <div class="detail-stat"><div class="stat-label">VOLUME</div><div class="stat-value" id="detail-vol" style="font-size:15px">—</div></div>
+      <div class="detail-stat"><div class="stat-label">MKT CAP</div><div class="stat-value" id="detail-cap" style="font-size:15px">—</div></div>
     </div>
     <div class="detail-chart">
       <div class="card-title">▶ 30-DAY PRICE</div>
@@ -310,18 +272,19 @@
   </div>
 </div>
 
-<!-- PORTFOLIO VIEW -->
+<!-- PORTFOLIO -->
+
 <div id="view-portfolio" class="view">
   <div class="portfolio-total-card">
-    <div class="portfolio-total-label">TOTAL PORTFOLIO VALUE</div>
-    <div class="portfolio-total-value" id="portfolio-total">₦0.00</div>
-    <div style="font-size:14px;margin-top:6px;" id="portfolio-pnl">Add your first position below</div>
+    <div style="color:#4a6fa5;font-size:11px;margin-bottom:6px">TOTAL PORTFOLIO VALUE</div>
+    <div style="color:#00d4aa;font-size:32px;font-weight:bold" id="portfolio-total">₦0.00</div>
+    <div style="font-size:14px;margin-top:6px" id="portfolio-pnl">Add your first position below</div>
   </div>
-  <div class="stat-grid-2" style="margin-top:10px;">
-    <div class="stat-box"><div class="stat-label">INVESTED</div><div class="stat-value" id="total-invested" style="font-size:16px;">₦0</div></div>
-    <div class="stat-box"><div class="stat-label">POSITIONS</div><div class="stat-value" id="position-count" style="font-size:16px;">0</div></div>
+  <div class="stat-grid-2" style="margin-top:10px">
+    <div class="stat-box"><div class="stat-label">INVESTED</div><div class="stat-value" id="total-invested" style="font-size:16px">₦0</div></div>
+    <div class="stat-box"><div class="stat-label">POSITIONS</div><div class="stat-value" id="position-count" style="font-size:16px">0</div></div>
   </div>
-  <div class="section-title" style="margin-top:10px;">▶ ADD POSITION</div>
+  <div class="section-title" style="margin-top:10px">▶ ADD POSITION</div>
   <div class="add-form">
     <div class="form-group">
       <div class="form-label">COMPANY</div>
@@ -341,12 +304,13 @@
     <button class="btn-full" onclick="addToPortfolio()">+ ADD POSITION</button>
   </div>
   <div class="section-title">▶ MY POSITIONS</div>
-  <div id="positions-list"><div style="color:#4a6fa5;text-align:center;padding:30px;font-size:13px;">No positions yet.</div></div>
+  <div id="positions-list"><div class="loading">No positions yet.</div></div>
 </div>
 
-<!-- ALERTS VIEW -->
+<!-- ALERTS -->
+
 <div id="view-alerts" class="view">
-  <div class="section-title" style="padding-top:16px;">▶ SET PRICE ALERT</div>
+  <div class="section-title" style="padding-top:16px">▶ SET PRICE ALERT</div>
   <div class="add-form">
     <div class="form-group">
       <div class="form-label">COMPANY</div>
@@ -369,18 +333,19 @@
     <button class="btn-full" onclick="addAlert()">🔔 SET ALERT</button>
   </div>
   <div class="section-title">▶ ACTIVE ALERTS</div>
-  <div id="alerts-list"><div style="color:#4a6fa5;text-align:center;padding:30px;font-size:13px;">No alerts set.</div></div>
+  <div id="alerts-list"><div class="loading">No alerts set.</div></div>
 </div>
 
 <!-- BOTTOM NAV -->
+
 <div class="bottom-nav">
-  <div class="nav-item active" onclick="showBottomNav('markets')" id="nav-markets">
+  <div class="nav-item active" id="nav-markets" onclick="showBottomNav('markets')">
     <span class="nav-icon">📊</span><span class="nav-label">MARKETS</span>
   </div>
-  <div class="nav-item" onclick="showBottomNav('portfolio')" id="nav-portfolio">
+  <div class="nav-item" id="nav-portfolio" onclick="showBottomNav('portfolio')">
     <span class="nav-icon">💼</span><span class="nav-label">PORTFOLIO</span>
   </div>
-  <div class="nav-item" onclick="showBottomNav('alerts')" id="nav-alerts">
+  <div class="nav-item" id="nav-alerts" onclick="showBottomNav('alerts')">
     <span class="nav-icon">🔔</span><span class="nav-label">ALERTS</span>
   </div>
 </div>
@@ -402,26 +367,22 @@ const COMPANIES = [
   {name:'Livingtrust Mortgage',sector:'Financials',price:5.35,chg:+0.20},
 ];
 
-
-let portfolio=[], alerts=[], stockChartInstance=null, cryptoChartInstance=null;
-let currentStock=null, previousView='markets', cryptoData=[], commodityData=[], macroData={}, fxRates={};
+let portfolio=[], alerts=[], currentStock=null, currentMainTab='markets';
+let stockChartInst=null, cryptoChartInst=null, fxRates={};
 
 // ===================== CLOCK =====================
-function updateClock() {
-  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-GB') + ' WAT';
+function updateClock(){
+  document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-GB')+' WAT';
 }
-setInterval(updateClock,1000); updateClock();
+setInterval(updateClock,1000);updateClock();
 
-// ===================== NAVIGATION =====================
-let currentMainTab = 'markets';
-let currentBottomNav = 'markets';
-
-function showMainTab(tab) {
+// ===================== NAV =====================
+function showMainTab(tab, el){
   document.querySelectorAll('.tab-bar .tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('[id^="tab-"]').forEach(v=>v.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
-  event.target.classList.add('active');
-  currentMainTab = tab;
+  if(el) el.classList.add('active');
+  currentMainTab=tab;
   document.getElementById('view-stock').classList.remove('active');
   document.getElementById('view-portfolio').classList.remove('active');
   document.getElementById('view-alerts').classList.remove('active');
@@ -430,34 +391,32 @@ function showMainTab(tab) {
   window.scrollTo(0,0);
 }
 
-function showBottomNav(name) {
-  document.querySelectorAll('[id^="tab-"]').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('[id^="view-"]').forEach(v=>v.classList.remove('active'));
+function showBottomNav(name){
+  document.querySelectorAll('[id^="tab-"],[id^="view-"]').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  if (name === 'markets') {
+  if(name==='markets'){
     document.getElementById('tab-'+currentMainTab).classList.add('active');
   } else {
     document.getElementById('view-'+name).classList.add('active');
   }
   document.getElementById('nav-'+name).classList.add('active');
-  currentBottomNav = name;
   window.scrollTo(0,0);
 }
 
-function showExchange(ex) {
+function showExchange(ex, el){
   document.querySelectorAll('.exchange-tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.sub-view').forEach(v=>v.classList.remove('active'));
   document.getElementById('exchange-'+ex).classList.add('active');
-  event.target.classList.add('active');
+  if(el) el.classList.add('active');
 }
 
 // ===================== FX =====================
-async function loadFX() {
+async function loadFX(){
   try {
-    const res = await fetch('https://open.er-api.com/v6/latest/USD');
-    const data = await res.json();
-    fxRates = data.rates;
-    const currencies = [
+    const res=await fetch('https://open.er-api.com/v6/latest/USD');
+    const data=await res.json();
+    fxRates=data.rates;
+    const currencies=[
       {code:'NGN',flag:'🇳🇬',name:'Nigeria'},
       {code:'GHS',flag:'🇬🇭',name:'Ghana'},
       {code:'KES',flag:'🇰🇪',name:'Kenya'},
@@ -471,28 +430,32 @@ async function loadFX() {
       {code:'XAF',flag:'🌍',name:'C.Africa CFA'},
       {code:'MZN',flag:'🇲🇿',name:'Mozambique'},
     ];
-    document.getElementById('fx-ticker').innerHTML = currencies.slice(0,8).map(c=>
-      `<div class="fx-item"><span class="fx-label">${c.flag} ${c.code}</span><span class="fx-value">${fxRates[c.code]?.toFixed(2)||'—'}</span></div>`
+    document.getElementById('fx-ticker').innerHTML=currencies.slice(0,8).map(c=>
+      `<div class="fx-item"><span class="fx-label">${c.flag} ${c.code}</span><span class="fx-value">${(fxRates[c.code]||0).toFixed(2)}</span></div>`
     ).join('<span style="color:#1e3a5f;padding:0 4px">|</span>');
-    document.getElementById('ngn-rate').textContent = '₦'+(fxRates['NGN']?.toFixed(0)||'—');
-    document.getElementById('fx-list-full').innerHTML = currencies.map(c=>`
+    const ngn=fxRates['NGN']||0;
+    document.getElementById('ngn-rate').textContent='₦'+ngn.toFixed(0);
+    document.getElementById('fx-list-full').innerHTML=currencies.map(c=>`
       <div class="fx-row">
-        <div style="display:flex;align-items:center;">
-          <span class="fx-flag">${c.flag}</span>
-          <div style="margin-left:10px;"><div class="fx-currency">${c.code}</div><div class="fx-country-name">${c.name}</div></div>
+        <div style="display:flex;align-items:center">
+          <span style="font-size:22px">${c.flag}</span>
+          <div style="margin-left:10px"><div style="color:#c0cce0;font-size:13px;font-weight:bold">${c.code}</div><div style="color:#4a6fa5;font-size:10px">${c.name}</div></div>
         </div>
-        <div class="fx-rate-big">${fxRates[c.code]?.toFixed(2)||'—'}</div>
+        <div style="color:#00d4aa;font-size:16px;font-weight:bold">${(fxRates[c.code]||0).toFixed(2)}</div>
       </div>`).join('');
-    drawFXChart(currencies.slice(0,6), fxRates);
-  } catch(e) {}
+    // FX Chart
+    const ctx=document.getElementById('fxChart').getContext('2d');
+    const top6=currencies.slice(0,6);
+    new Chart(ctx,{type:'bar',data:{labels:top6.map(c=>c.flag+' '+c.code),datasets:[{data:top6.map(c=>fxRates[c.code]||0),backgroundColor:['#00d4aa','#0088ff','#ff6600','#ff00aa','#ffcc00','#4a6fa5'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}},y:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}}}}});
+  } catch(e){console.log('FX error:',e)}
 }
 
 // ===================== CRYPTO =====================
-async function loadCrypto() {
+async function loadCrypto(){
   try {
-    const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,binancecoin,ripple,solana,cardano&vs_currencies=usd,ngn&include_24hr_change=true');
-    const data = await res.json();
-    const coins = [
+    const res=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,binancecoin,ripple,solana,cardano&vs_currencies=usd,ngn&include_24hr_change=true');
+    const data=await res.json();
+    const coins=[
       {id:'bitcoin',symbol:'BTC',name:'Bitcoin',icon:'₿'},
       {id:'ethereum',symbol:'ETH',name:'Ethereum',icon:'Ξ'},
       {id:'binancecoin',symbol:'BNB',name:'BNB',icon:'◈'},
@@ -500,84 +463,84 @@ async function loadCrypto() {
       {id:'solana',symbol:'SOL',name:'Solana',icon:'◎'},
       {id:'cardano',symbol:'ADA',name:'Cardano',icon:'₳'},
     ];
-    cryptoData = coins.map(c => ({...c, ...data[c.id]}));
-    const btc = data['bitcoin'];
-    const eth = data['ethereum'];
-    if (btc) {
-      document.getElementById('btc-ngn').textContent = '₦'+(btc.ngn/1000000).toFixed(1)+'M';
-      const btcChg = btc.usd_24h_change?.toFixed(2);
-      document.getElementById('btc-chg').innerHTML = `<span class="${btcChg>=0?'green':'red'}">${btcChg>=0?'+':''}${btcChg}% 24h</span>`;
+    const btc=data['bitcoin']||{};
+    const eth=data['ethereum']||{};
+    if(btc.ngn){
+      document.getElementById('btc-ngn').textContent='₦'+(btc.ngn/1000000).toFixed(1)+'M';
+      const c=(btc.usd_24h_change||0).toFixed(2);
+      document.getElementById('btc-chg').innerHTML=`<span class="${c>=0?'green':'red'}">${c>=0?'+':''}${c}% 24h</span>`;
     }
-    if (eth) {
-      document.getElementById('eth-ngn').textContent = '₦'+(eth.ngn/1000000).toFixed(2)+'M';
-      const ethChg = eth.usd_24h_change?.toFixed(2);
-      document.getElementById('eth-chg').innerHTML = `<span class="${ethChg>=0?'green':'red'}">${ethChg>=0?'+':''}${ethChg}% 24h</span>`;
+    if(eth.ngn){
+      document.getElementById('eth-ngn').textContent='₦'+(eth.ngn/1000000).toFixed(2)+'M';
+      const c=(eth.usd_24h_change||0).toFixed(2);
+      document.getElementById('eth-chg').innerHTML=`<span class="${c>=0?'green':'red'}">${c>=0?'+':''}${c}% 24h</span>`;
     }
-    document.getElementById('crypto-list').innerHTML = cryptoData.map(c => {
-      const chg = c.usd_24h_change?.toFixed(2)||0;
+    document.getElementById('crypto-list').innerHTML=coins.map(c=>{
+      const d=data[c.id]||{};
+      const chg=(d.usd_24h_change||0).toFixed(2);
       return `<div class="crypto-row">
-        <div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="color:#00d4aa;font-size:18px;">${c.icon}</span>
-            <div><div class="crypto-symbol">${c.symbol}</div><div class="crypto-name">${c.name}</div></div>
-          </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="color:#00d4aa;font-size:20px">${c.icon}</span>
+          <div><div style="color:#00d4aa;font-size:16px;font-weight:bold">${c.symbol}</div><div style="color:#4a6fa5;font-size:11px">${c.name}</div></div>
         </div>
-        <div>
-          <div class="crypto-usd">$${c.usd?.toLocaleString('en',{maximumFractionDigits:2})||'—'}</div>
-          <div class="crypto-ngn">₦${c.ngn?.toLocaleString('en',{maximumFractionDigits:0})||'—'}</div>
-          <div class="crypto-chg ${chg>=0?'green':'red'}">${chg>=0?'+':''}${chg}%</div>
+        <div style="text-align:right">
+          <div style="color:#e0e6f0;font-size:15px;font-weight:bold">$${(d.usd||0).toLocaleString('en',{maximumFractionDigits:2})}</div>
+          <div style="color:#4a6fa5;font-size:11px">₦${(d.ngn||0).toLocaleString('en',{maximumFractionDigits:0})}</div>
+          <div class="${chg>=0?'green':'red'}" style="font-size:12px">${chg>=0?'+':''}${chg}%</div>
         </div>
       </div>`;
     }).join('');
-    drawCryptoChart(btc?.usd||0);
-  } catch(e) {
-    document.getElementById('crypto-list').innerHTML = '<div style="color:#4a6fa5;text-align:center;padding:20px;">Loading crypto... (CoinGecko rate limit — retry in 60s)</div>';
+    // Crypto chart
+    if(cryptoChartInst) cryptoChartInst.destroy();
+    const ctx=document.getElementById('cryptoChart').getContext('2d');
+    const base=btc.usd||85000;
+    const pts=Array.from({length:7},()=>+(base*(0.92+Math.random()*0.16)).toFixed(0));
+    pts[6]=base;
+    cryptoChartInst=new Chart(ctx,{type:'line',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{data:pts,borderColor:'#ff9500',backgroundColor:'rgba(255,149,0,0.1)',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#ff9500'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}},y:{ticks:{color:'#4a6fa5',font:{size:9},callback:v=>'$'+v.toLocaleString()},grid:{color:'#0f1829'}}}}});
+  } catch(e){
+    document.getElementById('crypto-list').innerHTML='<div class="loading">Loading crypto... (retry in 60s if CoinGecko rate limited)</div>';
   }
 }
 
 // ===================== COMMODITIES =====================
-async function loadCommodities() {
-  const icons = {'Brent Crude Oil':'🛢️','Gold':'🥇','Cocoa':'🍫','Natural Gas':'🔥','Wheat':'🌾'};
-  const relevance = {'Brent Crude Oil':'Nigeria exports 1.5M bbl/day','Gold':'Ghana top 10 global producer','Cocoa':'Ivory Coast #1 global producer','Natural Gas':'Nigeria 9th largest reserves','Wheat':'Key import for food security'};
-  const units = {'Brent Crude Oil':'USD/barrel','Gold':'USD/oz','Cocoa':'USD/tonne','Natural Gas':'USD/MMBtu','Wheat':'USD/bushel'};
+async function loadCommodities(){
   try {
-    const res = await fetch('commodities_data.csv');
-    const text = await res.text();
-    const lines = text.trim().split('
-').slice(1);
-    const results = lines.map(line => {
-      const cols = line.split(',');
-      const name = cols[0];
-      const price = parseFloat(cols[2]).toFixed(2);
-      const chg = parseFloat(cols[4]).toFixed(2);
-      return {name, unit: units[name]||'', icon: icons[name]||'📊', relevance: relevance[name]||'', price, chg};
-    });
-    commodityData = results;
-    if (results[0].price !== '—') {
-      document.getElementById('oil-price').textContent = '$'+results[0].price;
+    const res=await fetch('commodities_data.csv');
+    if(!res.ok) throw new Error('CSV not found');
+    const text=await res.text();
+    const lines=text.trim().split('\n').slice(1);
+    const icons={'Brent Crude Oil':'🛢️','Gold':'🥇','Cocoa':'🍫','Natural Gas':'🔥','Wheat':'🌾'};
+    const relevance={'Brent Crude Oil':'Nigeria exports 1.5M bbl/day','Gold':'Ghana top 10 global producer','Cocoa':'Ivory Coast #1 global producer','Natural Gas':'Nigeria 9th largest reserves','Wheat':'Key import for food security'};
+    const units={'Brent Crude Oil':'USD/barrel','Gold':'USD/oz','Cocoa':'USD/tonne','Natural Gas':'USD/MMBtu','Wheat':'USD/bushel'};
+    const results=lines.map(line=>{
+      const cols=line.split(',');
+      return {name:cols[0],price:parseFloat(cols[2]).toFixed(2),chg:parseFloat(cols[4]).toFixed(2)};
+    }).filter(r=>r.name&&!isNaN(r.price));
+    if(results.length>0&&results[0].price!=='NaN'){
+      document.getElementById('oil-price').textContent='$'+results[0].price;
     }
-    document.getElementById('commodity-list').innerHTML = results.map(c => `
+    document.getElementById('commodity-list').innerHTML=results.map(c=>`
       <div class="commodity-row">
         <div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:22px;">${c.icon}</span>
-            <div><div class="commodity-name">${c.name}</div><div class="commodity-unit">${c.unit}</div></div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:22px">${icons[c.name]||'📊'}</span>
+            <div><div style="color:#c0cce0;font-size:14px;font-weight:bold">${c.name}</div><div style="color:#4a6fa5;font-size:10px">${units[c.name]||''}</div></div>
           </div>
-          <div style="color:#2a4a6f;font-size:10px;margin-top:4px;margin-left:30px;">${c.relevance}</div>
+          <div style="color:#2a4a6f;font-size:10px;margin-top:4px;margin-left:30px">${relevance[c.name]||''}</div>
         </div>
-        <div>
-          <div class="commodity-price">$${c.price}</div>
-          <div class="commodity-chg ${parseFloat(c.chg)>=0?'green':'red'}">${parseFloat(c.chg)>=0?'+':''}${c.chg}%</div>
+        <div style="text-align:right">
+          <div style="color:#e0e6f0;font-size:16px;font-weight:bold">$${c.price}</div>
+          <div class="${parseFloat(c.chg)>=0?'green':'red'}" style="font-size:12px">${parseFloat(c.chg)>=0?'+':''}${c.chg}%</div>
         </div>
       </div>`).join('');
-  } catch(e) {
-    document.getElementById('commodity-list').innerHTML='<div style="color:#4a6fa5;text-align:center;padding:20px;">Loading commodities...</div>';
+  } catch(e){
+    document.getElementById('commodity-list').innerHTML='<div class="loading">Run mega_scraper.py to load commodity data</div>';
   }
 }
 
 // ===================== MACRO =====================
-async function loadMacro() {
-  const countries = [
+async function loadMacro(){
+  const countries=[
     {code:'NG',name:'Nigeria',flag:'🇳🇬'},
     {code:'GH',name:'Ghana',flag:'🇬🇭'},
     {code:'KE',name:'Kenya',flag:'🇰🇪'},
@@ -585,38 +548,35 @@ async function loadMacro() {
     {code:'EG',name:'Egypt',flag:'🇪🇬'},
     {code:'ET',name:'Ethiopia',flag:'🇪🇹'},
   ];
-  const indicators = [
+  const indicators=[
     {code:'FP.CPI.TOTL.ZG',label:'Inflation %'},
     {code:'NY.GDP.MKTP.CD',label:'GDP (USD)',format:'gdp'},
     {code:'SL.UEM.TOTL.ZS',label:'Unemployment %'},
     {code:'FR.INR.RINR',label:'Interest Rate %'},
   ];
   try {
-    const allData = {};
-    await Promise.all(countries.map(async country => {
-      allData[country.code] = {};
-      await Promise.all(indicators.map(async ind => {
+    const allData={};
+    await Promise.all(countries.map(async country=>{
+      allData[country.code]={};
+      await Promise.all(indicators.map(async ind=>{
         try {
-          const res = await fetch(`https://api.worldbank.org/v2/country/${country.code}/indicator/${ind.code}?format=json&mrv=1`);
-          const data = await res.json();
-          if (data[1]?.[0]?.value != null) {
-            allData[country.code][ind.label] = {value: data[1][0].value, year: data[1][0].date};
+          const res=await fetch(`https://api.worldbank.org/v2/country/${country.code}/indicator/${ind.code}?format=json&mrv=1`);
+          const data=await res.json();
+          if(data[1]?.[0]?.value!=null){
+            allData[country.code][ind.label]={value:data[1][0].value,year:data[1][0].date};
           }
-        } catch {}
+        } catch{}
       }));
     }));
-    document.getElementById('macro-list').innerHTML = countries.map(country => {
-      const d = allData[country.code];
+    document.getElementById('macro-list').innerHTML=countries.map(country=>{
+      const d=allData[country.code];
       return `<div class="country-card">
         <div class="country-name">${country.flag} ${country.name}</div>
         <div class="macro-grid">
-          ${indicators.map(ind => {
-            const item = d[ind.label];
-            let val = '—';
-            if (item) {
-              if (ind.format==='gdp') val='$'+(item.value/1e9).toFixed(0)+'B';
-              else val = item.value.toFixed(1)+'%';
-            }
+          ${indicators.map(ind=>{
+            const item=d[ind.label];
+            let val='—';
+            if(item) val=ind.format==='gdp'?'$'+(item.value/1e9).toFixed(0)+'B':item.value.toFixed(1)+'%';
             return `<div class="macro-item">
               <div class="macro-label">${ind.label}</div>
               <div class="macro-value">${val}</div>
@@ -626,75 +586,68 @@ async function loadMacro() {
         </div>
       </div>`;
     }).join('');
-  } catch(e) {
-    document.getElementById('macro-list').innerHTML='<div style="color:#4a6fa5;text-align:center;padding:20px;">Loading macro data...</div>';
+  } catch(e){
+    document.getElementById('macro-list').innerHTML='<div class="loading">Loading macro data...</div>';
   }
 }
 
-// ===================== AFRICAN EXCHANGES =====================
-async function loadAfricanExchanges() {
-  const exchanges = [
-    {id:'gse',country:'Ghana',flag:'🇬🇭',url:'https://www.african-markets.com/en/stock-markets/gse/listed-companies',currency:'GHS'},
-    {id:'nse',country:'Kenya',flag:'🇰🇪',url:'https://www.african-markets.com/en/stock-markets/nse/listed-companies',currency:'KES'},
-    {id:'egx',country:'Egypt',flag:'🇪🇬',url:'https://www.african-markets.com/en/stock-markets/egx/listed-companies',currency:'EGP'},
-  ];
-  // NGX from existing data
-  document.getElementById('ngx-list').innerHTML = COMPANIES.map(c=>`
+// ===================== EXCHANGES =====================
+async function loadAfricanExchanges(){
+  // NGX
+  document.getElementById('ngx-list').innerHTML=COMPANIES.map(c=>`
     <div class="stock-row" onclick="showStockDetail('${c.name}')">
-      <div><div class="stock-row-name">${c.name}</div><div class="stock-row-sector">${c.sector}</div></div>
-      <div><div class="stock-row-price">₦${c.price.toFixed(2)}</div><div class="stock-row-chg ${c.chg>=0?'green':'red'}">${c.chg>=0?'+':''}${c.chg}%</div></div>
+      <div><div class="stock-name">${c.name}</div><div class="stock-sector">${c.sector}</div></div>
+      <div><div class="stock-price">₦${c.price.toFixed(2)}</div><div class="stock-chg ${c.chg>=0?'green':'red'}">${c.chg>=0?'+':''}${c.chg}%</div></div>
     </div>`).join('');
-  // Other exchanges via CORS proxy
-  for (const ex of exchanges) {
+  // Other exchanges
+  const exchanges=[
+    {id:'gse',flag:'🇬🇭',country:'Ghana',url:'https://www.african-markets.com/en/stock-markets/gse/listed-companies'},
+    {id:'nse',flag:'🇰🇪',country:'Kenya',url:'https://www.african-markets.com/en/stock-markets/nse/listed-companies'},
+    {id:'egx',flag:'🇪🇬',country:'Egypt',url:'https://www.african-markets.com/en/stock-markets/egx/listed-companies'},
+  ];
+  for(const ex of exchanges){
     try {
-      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(ex.url)}`;
-      const res = await fetch(proxyUrl);
-      const html = await res.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const rows = doc.querySelectorAll('tr.tabrow');
-      const companies = [];
-      rows.forEach(row => {
-        const cols = row.querySelectorAll('td');
-        if (cols.length >= 3) {
-          companies.push({
-            name: cols[0].textContent.trim(),
-            sector: cols[1].textContent.trim(),
-            price: cols[2].textContent.trim()
-          });
-        }
+      const proxyUrl=`https://api.allorigins.win/raw?url=${encodeURIComponent(ex.url)}`;
+      const res=await fetch(proxyUrl);
+      const html=await res.text();
+      const parser=new DOMParser();
+      const doc=parser.parseFromString(html,'text/html');
+      const rows=doc.querySelectorAll('tr.tabrow');
+      const companies=[];
+      rows.forEach(row=>{
+        const cols=row.querySelectorAll('td');
+        if(cols.length>=3) companies.push({name:cols[0].textContent.trim(),sector:cols[1].textContent.trim(),price:cols[2].textContent.trim()});
       });
-      if (companies.length > 0) {
-        document.getElementById(ex.id+'-list').innerHTML = companies.map(c=>`
+      if(companies.length>0){
+        document.getElementById(ex.id+'-list').innerHTML=companies.map(c=>`
           <div class="stock-row">
-            <div><div class="stock-row-name">${c.name}</div><div class="stock-row-sector">${c.sector}</div></div>
-            <div><div class="stock-row-price">${c.price}</div></div>
-          </div>`).join('') + (companies.length>20?`<div style="color:#4a6fa5;text-align:center;padding:10px;font-size:12px;">+${companies.length-20} more companies</div>`:'');
+            <div><div class="stock-name">${c.name}</div><div class="stock-sector">${c.sector}</div></div>
+            <div><div class="stock-price">${c.price}</div></div>
+          </div>`).join('');
       } else {
-        document.getElementById(ex.id+'-list').innerHTML=`<div style="color:#4a6fa5;text-align:center;padding:20px;">${ex.flag} ${ex.country} data loading...</div>`;
+        document.getElementById(ex.id+'-list').innerHTML=`<div class="loading">${ex.flag} ${ex.country} data loading...</div>`;
       }
-    } catch(e) {
-      document.getElementById(ex.id+'-list').innerHTML=`<div style="color:#4a6fa5;text-align:center;padding:20px;">${ex.flag} ${ex.country} — visit african-markets.com for data</div>`;
+    } catch(e){
+      document.getElementById(ex.id+'-list').innerHTML=`<div class="loading">${ex.flag} ${ex.country} — visit african-markets.com for data</div>`;
     }
   }
 }
 
 // ===================== STOCKS =====================
-function loadStocks() {
-  document.getElementById('stock-list').innerHTML = COMPANIES.map(c=>`
+function loadStocks(){
+  document.getElementById('stock-list').innerHTML=COMPANIES.map(c=>`
     <div class="stock-row" onclick="showStockDetail('${c.name}')">
-      <div><div class="stock-row-name">${c.name}</div><div class="stock-row-sector">${c.sector}</div></div>
-      <div><div class="stock-row-price">₦${c.price.toFixed(2)}</div><div class="stock-row-chg ${c.chg>=0?'green':'red'}">${c.chg>=0?'+':''}${c.chg}%</div></div>
+      <div><div class="stock-name">${c.name}</div><div class="stock-sector">${c.sector}</div></div>
+      <div><div class="stock-price">₦${c.price.toFixed(2)}</div><div class="stock-chg ${c.chg>=0?'green':'red'}">${c.chg>=0?'+':''}${c.chg}%</div></div>
     </div>`).join('');
-  const opts = COMPANIES.map(c=>`<option value="${c.name}">`).join('');
+  const opts=COMPANIES.map(c=>`<option value="${c.name}">`).join('');
   document.getElementById('company-list').innerHTML=opts;
   document.getElementById('company-list-2').innerHTML=opts;
 }
 
-// ===================== STOCK DETAIL =====================
-function showStockDetail(name) {
-  const s = COMPANIES.find(c=>c.name===name);
-  if (!s) return;
+function showStockDetail(name){
+  const s=COMPANIES.find(c=>c.name===name);
+  if(!s) return;
   currentStock=s;
   document.getElementById('detail-name').textContent=s.name;
   document.getElementById('detail-sector').textContent=s.sector;
@@ -704,33 +657,33 @@ function showStockDetail(name) {
   document.getElementById('detail-low').textContent='₦'+(s.price*0.75).toFixed(2);
   document.getElementById('detail-vol').textContent=(Math.random()*5+0.5).toFixed(1)+'M';
   document.getElementById('detail-cap').textContent='₦'+(s.price*(Math.random()*800+200)).toFixed(0)+'M';
-  if (stockChartInstance) stockChartInstance.destroy();
+  if(stockChartInst) stockChartInst.destroy();
   const ctx=document.getElementById('stockChart').getContext('2d');
   const pts=Array.from({length:30},()=>+(s.price*(0.85+Math.random()*0.3)).toFixed(2));
   pts[29]=s.price;
   const lbls=Array.from({length:30},(_,i)=>{const d=new Date();d.setDate(d.getDate()-29+i);return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});});
-  stockChartInstance=new Chart(ctx,{type:'line',data:{labels:lbls,datasets:[{data:pts,borderColor:'#00d4aa',backgroundColor:'rgba(0,212,170,0.08)',fill:true,tension:0.4,pointRadius:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}},y:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}}}}});
+  stockChartInst=new Chart(ctx,{type:'line',data:{labels:lbls,datasets:[{data:pts,borderColor:'#00d4aa',backgroundColor:'rgba(0,212,170,0.08)',fill:true,tension:0.4,pointRadius:1}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}},y:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}}}}});
   document.querySelectorAll('[id^="tab-"],[id^="view-"]').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-stock').classList.add('active');
   window.scrollTo(0,0);
 }
 
-function hideStockDetail() {
+function hideStockDetail(){
   document.getElementById('view-stock').classList.remove('active');
   document.getElementById('tab-'+currentMainTab).classList.add('active');
   window.scrollTo(0,0);
 }
 
 // ===================== SEARCH =====================
-document.getElementById('search-input').addEventListener('input', function() {
+document.getElementById('search-input').addEventListener('input',function(){
   const q=this.value.toLowerCase();
   const results=document.getElementById('search-results');
-  if (!q) {results.style.display='none';return;}
+  if(!q){results.style.display='none';return;}
   const matches=COMPANIES.filter(c=>c.name.toLowerCase().includes(q));
-  if (!matches.length) {results.style.display='none';return;}
+  if(!matches.length){results.style.display='none';return;}
   results.style.display='block';
   results.innerHTML=matches.map(c=>`
-    <div class="search-result-item" onclick="showStockDetail('${c.name}');this.closest('.search-results').style.display='none';document.getElementById('search-input').value='';">
+    <div class="search-result-item" onclick="showStockDetail('${c.name}');document.getElementById('search-results').style.display='none';document.getElementById('search-input').value=''">
       <div><div class="search-result-name">${c.name}</div><div class="search-result-sector">${c.sector}</div></div>
       <div class="${c.chg>=0?'green':'red'}">₦${c.price.toFixed(2)}</div>
     </div>`).join('');
@@ -738,7 +691,7 @@ document.getElementById('search-input').addEventListener('input', function() {
 document.addEventListener('click',e=>{if(!e.target.closest('.search-container'))document.getElementById('search-results').style.display='none';});
 
 // ===================== PORTFOLIO =====================
-function addToPortfolio() {
+function addToPortfolio(){
   const name=document.getElementById('port-company').value;
   const shares=parseFloat(document.getElementById('port-shares').value);
   const buyPrice=parseFloat(document.getElementById('port-price').value);
@@ -753,22 +706,22 @@ function addToPortfolio() {
 function addToPortfolioFromDetail(){if(!currentStock)return;showBottomNav('portfolio');document.getElementById('port-company').value=currentStock.name;document.getElementById('port-price').value=currentStock.price.toFixed(2);}
 function removePosition(i){portfolio.splice(i,1);renderPortfolio();}
 function renderPortfolio(){
-  let inv=0,cur=0;
   if(!portfolio.length){
-    document.getElementById('positions-list').innerHTML='<div style="color:#4a6fa5;text-align:center;padding:30px;font-size:13px;">No positions yet.</div>';
+    document.getElementById('positions-list').innerHTML='<div class="loading">No positions yet.</div>';
     document.getElementById('portfolio-total').textContent='₦0.00';
     document.getElementById('portfolio-pnl').textContent='Add your first position below';
     document.getElementById('total-invested').textContent='₦0';
     document.getElementById('position-count').textContent='0';
     return;
   }
+  let inv=0,cur=0;
   document.getElementById('positions-list').innerHTML=portfolio.map((p,i)=>{
     const invested=p.shares*p.buyPrice,current=p.shares*p.currentPrice,pnl=current-invested,pct=((pnl/invested)*100).toFixed(1);
     inv+=invested;cur+=current;
     return `<div class="position-card">
       <div class="position-top">
-        <div><div class="position-name">${p.name}</div><div style="color:#4a6fa5;font-size:10px;">${p.shares.toLocaleString()} shares</div></div>
-        <button class="btn-remove-small" onclick="removePosition(${i})">✕</button>
+        <div><div style="color:#c0cce0;font-size:14px;font-weight:bold">${p.name}</div><div style="color:#4a6fa5;font-size:10px">${p.shares.toLocaleString()} shares</div></div>
+        <button class="btn-remove" onclick="removePosition(${i})">✕</button>
       </div>
       <div class="position-bottom">
         <div class="position-stat"><div class="position-stat-label">BUY</div><div class="position-stat-value">₦${p.buyPrice.toFixed(2)}</div></div>
@@ -799,49 +752,36 @@ function addAlert(){
 function setAlertFromDetail(){if(!currentStock)return;showBottomNav('alerts');document.getElementById('alert-company').value=currentStock.name;}
 function removeAlert(i){alerts.splice(i,1);renderAlerts();}
 function renderAlerts(){
-  if(!alerts.length){document.getElementById('alerts-list').innerHTML='<div style="color:#4a6fa5;text-align:center;padding:30px;font-size:13px;">No alerts set.</div>';return;}
+  if(!alerts.length){document.getElementById('alerts-list').innerHTML='<div class="loading">No alerts set.</div>';return;}
   document.getElementById('alerts-list').innerHTML=alerts.map((a,i)=>`
     <div class="alert-card ${a.triggered?'triggered':''}">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
-        <div><div style="color:#c0cce0;font-size:15px;font-weight:bold;">${a.company}</div>
-        <div style="color:#4a6fa5;font-size:12px;margin-top:3px;">Goes ${a.condition} ₦${a.targetPrice.toFixed(2)}${a.currentPrice?` · Now: ₦${a.currentPrice.toFixed(2)}`:''}</div></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div>
+          <div style="color:#c0cce0;font-size:15px;font-weight:bold">${a.company}</div>
+          <div style="color:#4a6fa5;font-size:12px;margin-top:3px">Goes ${a.condition} ₦${a.targetPrice.toFixed(2)}${a.currentPrice?' · Now: ₦'+a.currentPrice.toFixed(2):''}</div>
+        </div>
         <span class="badge ${a.triggered?'badge-triggered':'badge-active'}">${a.triggered?'✓ HIT':'ACTIVE'}</span>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <span style="color:#2a4a6f;font-size:10px;">Set ${a.time}</span>
-        <button class="btn-remove-small" onclick="removeAlert(${i})">Remove</button>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:#2a4a6f;font-size:10px">Set ${a.time}</span>
+        <button class="btn-remove" onclick="removeAlert(${i})">Remove</button>
       </div>
     </div>`).join('');
 }
 function checkAlerts(){
   alerts.forEach(a=>{
     const s=COMPANIES.find(c=>c.name===a.company);
-    if(!s)return;
-    if(a.condition==='above'&&s.price>a.targetPrice)a.triggered=true;
-    if(a.condition==='below'&&s.price<a.targetPrice)a.triggered=true;
+    if(!s) return;
+    if(a.condition==='above'&&s.price>a.targetPrice) a.triggered=true;
+    if(a.condition==='below'&&s.price<a.targetPrice) a.triggered=true;
   });
   renderAlerts();
 }
 
-// ===================== CHARTS =====================
+// ===================== INDEX CHART =====================
 function drawIndexChart(){
   const ctx=document.getElementById('indexChart').getContext('2d');
   new Chart(ctx,{type:'line',data:{labels:['9am','10am','11am','12pm','1pm','2pm','3pm','4pm'],datasets:[{data:[97200,97380,97290,97520,97610,97480,97750,97842],borderColor:'#00d4aa',backgroundColor:'rgba(0,212,170,0.1)',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#00d4aa'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}},y:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}}}}});
-}
-
-function drawCryptoChart(btcPrice){
-  const ctx=document.getElementById('cryptoChart').getContext('2d');
-  if(cryptoChartInstance)cryptoChartInstance.destroy();
-  const base=btcPrice||85000;
-  const pts=Array.from({length:7},()=>+(base*(0.92+Math.random()*0.16)).toFixed(0));
-  pts[6]=base;
-  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  cryptoChartInstance=new Chart(ctx,{type:'line',data:{labels:days,datasets:[{data:pts,borderColor:'#ff9500',backgroundColor:'rgba(255,149,0,0.1)',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#ff9500'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}},y:{ticks:{color:'#4a6fa5',font:{size:9},callback:v=>'$'+v.toLocaleString()},grid:{color:'#0f1829'}}}}});
-}
-
-function drawFXChart(currencies, rates){
-  const ctx=document.getElementById('fxChart').getContext('2d');
-  new Chart(ctx,{type:'bar',data:{labels:currencies.map(c=>c.flag+' '+c.code),datasets:[{data:currencies.map(c=>rates[c.code]||0),backgroundColor:['#00d4aa','#0088ff','#ff6600','#ff00aa','#ffcc00','#4a6fa5'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}},y:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}}}}});
 }
 
 // ===================== INIT =====================
@@ -852,10 +792,10 @@ loadCrypto();
 loadCommodities();
 loadMacro();
 loadAfricanExchanges();
-setInterval(loadFX, 60000);
-setInterval(loadCrypto, 120000);
-setInterval(loadCommodities, 300000);
-setInterval(checkAlerts, 30000);
+setInterval(loadFX,60000);
+setInterval(loadCrypto,120000);
+setInterval(checkAlerts,30000);
 </script>
+
 </body>
 </html>
