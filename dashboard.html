@@ -665,7 +665,7 @@ async function loadAfricanExchanges() {
         }
       });
       if (companies.length > 0) {
-        document.getElementById(ex.id+'-list').innerHTML = companies.slice(0,20).map(c=>`
+        document.getElementById(ex.id+'-list').innerHTML = companies.map(c=>`
           <div class="stock-row">
             <div><div class="stock-row-name">${c.name}</div><div class="stock-row-sector">${c.sector}</div></div>
             <div><div class="stock-row-price">${c.price}</div></div>
