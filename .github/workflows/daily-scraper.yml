@@ -2,8 +2,11 @@ name: Daily AfriTerminal Data Update
 
 on:
   schedule:
-    - cron: '0 14 * * 1-5'
-    - cron: '30 14 * * 1-5'
+    - cron: '0 7 * * 1-5'   # 07:00 UTC — pre-market
+    - cron: '0 9 * * 1-5'   # 09:00 UTC — market open (NSE/EGX open)
+    - cron: '0 11 * * 1-5'  # 11:00 UTC — mid-session
+    - cron: '0 13 * * 1-5'  # 13:00 UTC — NGX open, near close for others
+    - cron: '0 15 * * 1-5'  # 15:00 UTC — post-close update
   workflow_dispatch:
 
 jobs:
