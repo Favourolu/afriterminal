@@ -710,16 +710,47 @@ async function loadAfricanExchanges(){
 }
 
 // ===================== STOCKS =====================
-function loadStocks(){
+async function loadStocks(){
+  try {
+    const res = await fetch('ngx_live_prices.csv');
+    if(!res.ok) throw new Error('CSV not found');
+    const text = await res.text();
+    const lines = text.trim().split('\n').slice(1);
+    lines.forEach(line => {
+      const cols = line.split(',');
+      const ticker = cols[0];
+      const price = parseFloat(cols[1]);
+      const chg = parseFloat(cols[6]);
+      // Match ticker to company name
+      const map = {
+        'DANGCEM':'Dangote Cement','MTNN':'MTN Nigeria',
+        'ACCESSCORP':'Access Holdings','GTCO':'Guaranty Trust',
+        'BUACEMENT':'BUA Cement','STANBIC':'Stanbic IBTC',
+        'TRANSCORP':'Transcorp','ZENITHBANK':'Zenith Bank',
+        'AIRTELAFRI':'Airtel Africa','AFRIPRUD':'Africa Prudential',
+        'MCNICHOLS':'McNichols','LIVINGTRUST':'Livingtrust Mortgage',
+        'UBA':'UBA','SEPLAT':'Seplat'
+      };
+      const name = map[ticker];
+      if(name){
+        const c = COMPANIES.find(co=>co.name===name);
+        if(c){ c.price=price; c.chg=chg; }
+      }
+    });
+  } catch(e){
+    console.warn('Using fallback prices:', e);
+  }
+  // Render with whatever prices we have
   document.getElementById('stock-list').innerHTML=COMPANIES.map(c=>`
     <div class="stock-row" onclick="showStockDetail('${c.name.replace(/'/g,"\\'")}')">
       <div><div class="stock-name">${c.name}</div><div class="stock-sector">${c.sector}</div></div>
-      <div><div class="stock-price">₦${c.price.toFixed(2)}</div><div class="stock-chg ${c.chg>=0?'green':'red'}">${c.chg>=0?'+':''}${c.chg}%</div></div>
+      <div><div class="stock-price">₦${c.price.toFixed(2)}</div><div class="stock-chg ${c.chg>=0?'green':'red'}">${c.chg>=0?'+':''}${c.chg.toFixed(2)}%</div></div>
     </div>`).join('');
   const opts=COMPANIES.map(c=>`<option value="${c.name}">`).join('');
   document.getElementById('company-list').innerHTML=opts;
   document.getElementById('company-list-2').innerHTML=opts;
 }
+
 
 function showStockDetail(name){
   const s=COMPANIES.find(c=>c.name===name);
