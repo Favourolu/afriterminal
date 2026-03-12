@@ -2,7 +2,9 @@ import requests
 import pandas as pd
 from datetime import datetime
 
-API_KEY = "88c270ffbace42c3afffed5e33eab801583b01e3af974f30ac6a36643fd977c7"
+import os
+API_KEY = os.environ.get("ITICK_API_KEY", "88c270ffbace42c3afffed5e33eab801583b01e3af974f30ac6a36643fd977c7")
+
 headers = {"token": API_KEY}
 
 NGX_STOCKS = [
