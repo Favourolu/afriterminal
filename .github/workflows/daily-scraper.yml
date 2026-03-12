@@ -2,19 +2,21 @@ name: Daily AfriTerminal Data Update
 
 on:
   schedule:
-    - cron: '0 14 * * 1-5'  # 2pm UTC = 3pm WAT, weekdays only
-    - cron: '30 14 * * 1-5' # 2:30pm UTC = 3:30pm WAT backup run
-  workflow_dispatch: # allows manual trigger too
+    - cron: '0 14 * * 1-5'
+    - cron: '30 14 * * 1-5'
+  workflow_dispatch:
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
@@ -32,7 +34,7 @@ jobs:
       - name: Run mega scraper
         run: python mega_scraper.py
 
-      - name: Commit and push new data
+      - name: Commit and push
         run: |
           git config --global user.email "afriterminal@auto.com"
           git config --global user.name "AfriTerminal Bot"
