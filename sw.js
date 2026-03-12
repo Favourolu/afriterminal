@@ -1,8 +1,12 @@
-const CACHE = 'afriterminal-v1';
+const CACHE = 'afriterminal-v2';
 const SHELL = [
   'dashboard.html',
   'privacy.html',
   'manifest.json',
+  'ngx_live_prices.csv',
+  'african_exchanges.csv',
+  'commodities_data.csv',
+  'macro_data.csv',
   'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js',
   'https://unpkg.com/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js'
 ];

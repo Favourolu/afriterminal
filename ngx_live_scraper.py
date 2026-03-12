@@ -3,7 +3,10 @@ import pandas as pd
 from datetime import datetime
 
 import os
-API_KEY = os.environ.get("ITICK_API_KEY", "88c270ffbace42c3afffed5e33eab801583b01e3af974f30ac6a36643fd977c7")
+API_KEY = os.environ.get("ITICK_API_KEY")
+if not API_KEY:
+    print("❌ ITICK_API_KEY environment variable not set. Skipping NGX live scrape.")
+    exit(0)
 
 headers = {"token": API_KEY}
 

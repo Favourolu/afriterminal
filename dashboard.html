@@ -134,7 +134,7 @@ body{background:#0a0e1a;color:#e0e6f0;font-family:-apple-system,'Courier New',mo
   </div>
   <div style="display:flex;gap:10px;align-items:center">
     <span style="color:#4a6fa5;font-size:10px" id="clock"></span>
-    <span class="live-badge">● LIVE</span>
+    <span class="live-badge" id="data-freshness">● LIVE</span>
   </div>
 </div>
 
@@ -169,16 +169,13 @@ body{background:#0a0e1a;color:#e0e6f0;font-family:-apple-system,'Courier New',mo
     <div class="stat-box"><div class="stat-label">BRENT CRUDE</div><div class="stat-value" id="oil-price" style="font-size:16px">—</div><div class="stat-sub">USD/bbl</div></div>
   </div>
   <div class="card" style="margin-top:14px">
-    <div class="card-title">▶ NGX INDEX TODAY</div>
+    <div class="card-title">▶ NGX INDEX — PREV. SESSION</div>
     <div class="chart-container"><canvas id="indexChart"></canvas></div>
   </div>
   <div class="section-title">▶ NGX TOP SECURITIES</div>
   <div id="stock-list"></div>
   <div class="section-title">▶ MARKET INTELLIGENCE</div>
-  <div class="news-card"><div class="news-time">11 MAR 2026 · 09:00</div><div class="news-headline">NGX All-Share Index opens positive amid banking sector rally</div><div class="news-source">NGX GROUP</div></div>
-  <div class="news-card"><div class="news-time">11 MAR 2026 · 08:45</div><div class="news-headline">CBN holds MPR at 27.5% — naira stabilises at ₦1,594/USD</div><div class="news-source">CBN</div></div>
-  <div class="news-card"><div class="news-time">10 MAR 2026 · 17:30</div><div class="news-headline">Dangote Cement posts record Q4 revenue, dividend declared</div><div class="news-source">NGX FILING</div></div>
-  <div class="news-card"><div class="news-time">10 MAR 2026 · 15:00</div><div class="news-headline">African fintech funding up 40% in H1 2025 — Partech report</div><div class="news-source">AFRICAN MARKETS</div></div>
+  <div id="news-list"><div class="loading">Loading news...</div></div>
 </div>
 
 <!-- ===== CRYPTO ===== -->
@@ -266,10 +263,10 @@ body{background:#0a0e1a;color:#e0e6f0;font-family:-apple-system,'Courier New',mo
     <div class="detail-price" id="detail-price">—</div>
     <div class="detail-change" id="detail-change">—</div>
     <div class="detail-stats">
-      <div class="detail-stat"><div class="stat-label">52W HIGH</div><div class="stat-value" id="detail-high" style="font-size:15px">—</div></div>
-      <div class="detail-stat"><div class="stat-label">52W LOW</div><div class="stat-value" id="detail-low" style="font-size:15px">—</div></div>
+      <div class="detail-stat"><div class="stat-label">DAY HIGH</div><div class="stat-value" id="detail-high" style="font-size:15px">—</div></div>
+      <div class="detail-stat"><div class="stat-label">DAY LOW</div><div class="stat-value" id="detail-low" style="font-size:15px">—</div></div>
       <div class="detail-stat"><div class="stat-label">VOLUME</div><div class="stat-value" id="detail-vol" style="font-size:15px">—</div></div>
-      <div class="detail-stat"><div class="stat-label">MKT CAP</div><div class="stat-value" id="detail-cap" style="font-size:15px">—</div></div>
+      <div class="detail-stat"><div class="stat-label">OPEN</div><div class="stat-value" id="detail-cap" style="font-size:15px">—</div></div>
     </div>
     <div class="detail-chart">
       <div class="card-title">▶ 30-DAY PRICE</div>
@@ -362,19 +359,54 @@ body{background:#0a0e1a;color:#e0e6f0;font-family:-apple-system,'Courier New',mo
 
 <script>
 // ===================== DATA =====================
-const COMPANIES = [
-  {name:'Dangote Cement',sector:'Industrials',price:810.00,chg:+0.62},
-  {name:'MTN Nigeria',sector:'Telecoms',price:790.00,chg:-2.15},
-  {name:'Access Holdings',sector:'Financials',price:25.00,chg:-0.20},
-  {name:'Guaranty Trust',sector:'Financials',price:117.05,chg:+0.04},
-  {name:'BUA Cement',sector:'Industrials',price:225.00,chg:+1.12},
-  {name:'Stanbic IBTC',sector:'Financials',price:133.50,chg:+0.10},
-  {name:'Transcorp',sector:'Conglomerates',price:48.75,chg:+0.10},
-  {name:'Zenith Bank',sector:'Financials',price:38.45,chg:-0.30},
-  {name:'Airtel Africa',sector:'Telecoms',price:1980.00,chg:-0.50},
-  {name:'Africa Prudential',sector:'Technology',price:15.65,chg:+0.50},
-  {name:'McNichols',sector:'Consumer Goods',price:6.62,chg:+3.20},
-  {name:'Livingtrust Mortgage',sector:'Financials',price:5.35,chg:+0.20},
+// Full NGX ticker → name/sector map (all 30 tracked stocks)
+const NGX_MAP = {
+  'DANGCEM':   {name:'Dangote Cement',          sector:'Industrials'},
+  'MTNN':      {name:'MTN Nigeria',             sector:'Telecoms'},
+  'ZENITHBA':  {name:'Zenith Bank',             sector:'Financials'},
+  'ACCESSCORP':{name:'Access Holdings',         sector:'Financials'},
+  'GTCO':      {name:'Guaranty Trust',          sector:'Financials'},
+  'AIRTELAFRI':{name:'Airtel Africa',           sector:'Telecoms'},
+  'BUACEMENT': {name:'BUA Cement',              sector:'Industrials'},
+  'STANBIC':   {name:'Stanbic IBTC',            sector:'Financials'},
+  'TRANSCORP': {name:'Transcorp',               sector:'Conglomerates'},
+  'UBA':       {name:'UBA',                     sector:'Financials'},
+  'FBNH':      {name:'FBN Holdings',            sector:'Financials'},
+  'SEPLAT':    {name:'Seplat Energy',           sector:'Energy'},
+  'OANDO':     {name:'Oando',                   sector:'Energy'},
+  'NB':        {name:'Nigerian Breweries',      sector:'Consumer Goods'},
+  'NESTLE':    {name:'Nestle Nigeria',          sector:'Consumer Goods'},
+  'FLOURMILL': {name:'Flour Mills',             sector:'Consumer Goods'},
+  'CADBURY':   {name:'Cadbury Nigeria',         sector:'Consumer Goods'},
+  'UNILEVER':  {name:'Unilever Nigeria',        sector:'Consumer Goods'},
+  'WAPCO':     {name:'Lafarge Africa',          sector:'Industrials'},
+  'PRESCO':    {name:'Presco',                  sector:'Consumer Goods'},
+  'FIDSON':    {name:'Fidson Healthcare',       sector:'Healthcare'},
+  'MAYBAKER':  {name:'May & Baker',             sector:'Healthcare'},
+  'UNIVINSURE':{name:'Universal Insurance',     sector:'Insurance'},
+  'MANSARD':   {name:'AXA Mansard',             sector:'Insurance'},
+  'CORNERST':  {name:'Cornerstone Insurance',   sector:'Insurance'},
+  'JAIZBANK':  {name:'Jaiz Bank',               sector:'Financials'},
+  'FIDELITYBK':{name:'Fidelity Bank',           sector:'Financials'},
+  'FCMB':      {name:'FCMB Group',              sector:'Financials'},
+  'STERBANK':  {name:'Sterling Bank',           sector:'Financials'},
+  'WEMABANK':  {name:'Wema Bank',               sector:'Financials'},
+};
+
+// Fallback stock list — shown if live CSV is unavailable
+let COMPANIES = [
+  {name:'Dangote Cement', sector:'Industrials',    ticker:'DANGCEM',   price:810.00, chg:+0.62, high:0, low:0, open:0, volume:0},
+  {name:'MTN Nigeria',    sector:'Telecoms',       ticker:'MTNN',      price:790.00, chg:-2.15, high:0, low:0, open:0, volume:0},
+  {name:'Access Holdings',sector:'Financials',     ticker:'ACCESSCORP',price:25.00,  chg:-0.20, high:0, low:0, open:0, volume:0},
+  {name:'Guaranty Trust', sector:'Financials',     ticker:'GTCO',      price:117.05, chg:+0.04, high:0, low:0, open:0, volume:0},
+  {name:'BUA Cement',     sector:'Industrials',    ticker:'BUACEMENT', price:225.00, chg:+1.12, high:0, low:0, open:0, volume:0},
+  {name:'Stanbic IBTC',   sector:'Financials',     ticker:'STANBIC',   price:133.50, chg:+0.10, high:0, low:0, open:0, volume:0},
+  {name:'Transcorp',      sector:'Conglomerates',  ticker:'TRANSCORP', price:48.75,  chg:+0.10, high:0, low:0, open:0, volume:0},
+  {name:'Zenith Bank',    sector:'Financials',     ticker:'ZENITHBA',  price:38.45,  chg:-0.30, high:0, low:0, open:0, volume:0},
+  {name:'Airtel Africa',  sector:'Telecoms',       ticker:'AIRTELAFRI',price:1980.00,chg:-0.50, high:0, low:0, open:0, volume:0},
+  {name:'UBA',            sector:'Financials',     ticker:'UBA',       price:46.00,  chg:+0.10, high:0, low:0, open:0, volume:0},
+  {name:'Seplat Energy',  sector:'Energy',         ticker:'SEPLAT',    price:9000.00,chg:+2.00, high:0, low:0, open:0, volume:0},
+  {name:'FBN Holdings',   sector:'Financials',     ticker:'FBNH',      price:28.00,  chg:+0.50, high:0, low:0, open:0, volume:0},
 ];
 
 // Commodity fallback data (used when CSV not available)
@@ -549,13 +581,23 @@ async function loadCrypto(){
         </div>
       </div>`;
     }).join('');
-    // Crypto chart
-    if(cryptoChartInst){cryptoChartInst.destroy();cryptoChartInst=null;}
-    const ctx=document.getElementById('cryptoChart').getContext('2d');
-    const base=btc.usd||85000;
-    const pts=Array.from({length:7},()=>+(base*(0.92+Math.random()*0.16)).toFixed(0));
-    pts[6]=base;
-    cryptoChartInst=new Chart(ctx,{type:'line',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{data:pts,borderColor:'#ff9500',backgroundColor:'rgba(255,149,0,0.1)',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#ff9500'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}},y:{ticks:{color:'#4a6fa5',font:{size:9},callback:v=>'$'+v.toLocaleString()},grid:{color:'#0f1829'}}}}});
+    // Crypto chart — real 7-day data from CoinGecko
+    try {
+      const chartRes=await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7&interval=daily');
+      if(!chartRes.ok) throw new Error('chart '+chartRes.status);
+      const chartData=await chartRes.json();
+      const prices=chartData.prices||[];
+      if(!prices.length) throw new Error('empty');
+      if(cryptoChartInst){cryptoChartInst.destroy();cryptoChartInst=null;}
+      const ctx=document.getElementById('cryptoChart').getContext('2d');
+      const labels=prices.map(p=>new Date(p[0]).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}));
+      const vals=prices.map(p=>+p[1].toFixed(0));
+      cryptoChartInst=new Chart(ctx,{type:'line',data:{labels,datasets:[{data:vals,borderColor:'#ff9500',backgroundColor:'rgba(255,149,0,0.1)',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:'#ff9500'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#4a6fa5',font:{size:9}},grid:{color:'#0f1829'}},y:{ticks:{color:'#4a6fa5',font:{size:9},callback:v=>'$'+v.toLocaleString()},grid:{color:'#0f1829'}}}}});
+    } catch(e){
+      console.warn('Crypto chart unavailable:',e);
+      const chartCard=document.querySelector('#tab-crypto .card');
+      if(chartCard) chartCard.innerHTML='<div class="card-title">▶ BITCOIN 7-DAY TREND</div><div style="color:#4a6fa5;font-size:12px;padding:20px 0;text-align:center">Chart unavailable — rate limited. Prices above are current.</div>';
+    }
   } catch(e){
     console.warn('Crypto error:',e);
     document.getElementById('crypto-list').innerHTML='<div class="loading" style="color:#ff4444">⚠ CoinGecko rate limited — auto-retries every 2 min</div>';
@@ -663,48 +705,83 @@ async function loadMacro(){
 
 // ===================== AFRICAN EXCHANGES =====================
 async function loadAfricanExchanges(){
-  // NGX — always populated from local COMPANIES data
+  // NGX — populated from live CSV data (already loaded by loadStocks)
   document.getElementById('ngx-list').innerHTML=COMPANIES.map(c=>`
     <div class="stock-row" onclick="showStockDetail('${c.name.replace(/'/g,"\\'")}')">
       <div><div class="stock-name">${c.name}</div><div class="stock-sector">${c.sector}</div></div>
-      <div><div class="stock-price">₦${c.price.toFixed(2)}</div><div class="stock-chg ${c.chg>=0?'green':'red'}">${c.chg>=0?'+':''}${c.chg}%</div></div>
+      <div><div class="stock-price">₦${c.price.toFixed(2)}</div><div class="stock-chg ${c.chg>=0?'green':'red'}">${c.chg>=0?'+':''}${c.chg.toFixed(2)}%</div></div>
     </div>`).join('');
 
-  // GSE, NSE, EGX — try external scrape with graceful fallback
-  const exchanges=[
-    {id:'gse',flag:'🇬🇭',country:'Ghana',   url:'https://www.african-markets.com/en/stock-markets/gse/listed-companies'},
-    {id:'nse',flag:'🇰🇪',country:'Kenya',   url:'https://www.african-markets.com/en/stock-markets/nse/listed-companies'},
-    {id:'egx',flag:'🇪🇬',country:'Egypt',   url:'https://www.african-markets.com/en/stock-markets/egx/listed-companies'},
-  ];
-  for(const ex of exchanges){
-    try {
-      const proxyUrl=`https://api.allorigins.win/raw?url=${encodeURIComponent(ex.url)}`;
-      const res=await fetch(proxyUrl);
-      if(!res.ok) throw new Error(res.status);
-      const html=await res.text();
-      const parser=new DOMParser();
-      const doc=parser.parseFromString(html,'text/html');
-      const rows=doc.querySelectorAll('tr.tabrow');
-      const companies=[];
-      rows.forEach(row=>{
-        const cols=row.querySelectorAll('td');
-        if(cols.length>=3) companies.push({name:cols[0].textContent.trim(),sector:cols[1].textContent.trim(),price:cols[2].textContent.trim()});
-      });
-      if(companies.length>0){
-        document.getElementById(ex.id+'-list').innerHTML=companies.map(c=>`
+  // GSE, NSE, EGX — load from local CSV first (reliable), proxy as fallback
+  const exchangeKeys = {
+    'gse': 'Ghana (GSE)',
+    'nse': 'Kenya (NSE)',
+    'egx': 'Egypt (EGX)',
+  };
+  try {
+    const res = await fetch('african_exchanges.csv');
+    if(!res.ok) throw new Error('CSV not found');
+    const text = await res.text();
+    const lines = text.trim().split('\n').slice(1).filter(l => l.trim());
+    const byExchange = {};
+    lines.forEach(line => {
+      const parts = line.split(',');
+      if(parts.length < 4) return;
+      const exchange = parts[0]?.trim();
+      const company  = parts[1]?.trim();
+      const sector   = parts[2]?.trim();
+      const price    = parts[3]?.trim();
+      if(!company || company === 'Company') return; // skip header rows
+      if(!byExchange[exchange]) byExchange[exchange] = [];
+      byExchange[exchange].push({company, sector, price});
+    });
+    for(const [exId, exchangeName] of Object.entries(exchangeKeys)){
+      const companies = byExchange[exchangeName] || [];
+      if(companies.length > 0){
+        document.getElementById(exId+'-list').innerHTML = companies.map(c=>`
           <div class="stock-row">
-            <div><div class="stock-name">${c.name}</div><div class="stock-sector">${c.sector}</div></div>
+            <div><div class="stock-name">${c.company}</div><div class="stock-sector">${c.sector}</div></div>
             <div><div class="stock-price">${c.price}</div></div>
           </div>`).join('');
       } else {
-        throw new Error('No rows found');
+        document.getElementById(exId+'-list').innerHTML='<div class="loading">No data in CSV for this exchange.</div>';
       }
-    } catch(e){
-      document.getElementById(ex.id+'-list').innerHTML=`
-        <div class="news-card" style="margin:0 16px 8px">
-          <div class="news-headline">${ex.flag} ${ex.country} exchange data unavailable via proxy</div>
-          <div class="news-source" style="margin-top:6px"><a href="https://www.african-markets.com" target="_blank" style="color:#00d4aa;text-decoration:none">View on african-markets.com ↗</a></div>
-        </div>`;
+    }
+  } catch(e){
+    // CSV failed — try live proxy for each exchange
+    const exchanges=[
+      {id:'gse',flag:'🇬🇭',country:'Ghana', url:'https://www.african-markets.com/en/stock-markets/gse/listed-companies'},
+      {id:'nse',flag:'🇰🇪',country:'Kenya', url:'https://www.african-markets.com/en/stock-markets/nse/listed-companies'},
+      {id:'egx',flag:'🇪🇬',country:'Egypt', url:'https://www.african-markets.com/en/stock-markets/egx/listed-companies'},
+    ];
+    for(const ex of exchanges){
+      try {
+        const proxyUrl=`https://api.allorigins.win/raw?url=${encodeURIComponent(ex.url)}`;
+        const res=await fetch(proxyUrl);
+        if(!res.ok) throw new Error(res.status);
+        const html=await res.text();
+        const parser=new DOMParser();
+        const doc=parser.parseFromString(html,'text/html');
+        const rows=doc.querySelectorAll('tr.tabrow');
+        const companies=[];
+        rows.forEach(row=>{
+          const cols=row.querySelectorAll('td');
+          if(cols.length>=3) companies.push({name:cols[0].textContent.trim(),sector:cols[1].textContent.trim(),price:cols[2].textContent.trim()});
+        });
+        if(companies.length>0){
+          document.getElementById(ex.id+'-list').innerHTML=companies.map(c=>`
+            <div class="stock-row">
+              <div><div class="stock-name">${c.name}</div><div class="stock-sector">${c.sector}</div></div>
+              <div><div class="stock-price">${c.price}</div></div>
+            </div>`).join('');
+        } else { throw new Error('No rows'); }
+      } catch(err){
+        document.getElementById(ex.id+'-list').innerHTML=`
+          <div class="news-card" style="margin:0 16px 8px">
+            <div class="news-headline">${ex.flag} ${ex.country} exchange data unavailable</div>
+            <div class="news-source" style="margin-top:6px"><a href="https://www.african-markets.com" target="_blank" style="color:#00d4aa;text-decoration:none">View on african-markets.com ↗</a></div>
+          </div>`;
+      }
     }
   }
 }
@@ -715,32 +792,42 @@ async function loadStocks(){
     const res = await fetch('ngx_live_prices.csv');
     if(!res.ok) throw new Error('CSV not found');
     const text = await res.text();
-    const lines = text.trim().split('\n').slice(1);
+    const lines = text.trim().split('\n').slice(1).filter(l => l.trim());
+    const csvStocks = [];
     lines.forEach(line => {
       const cols = line.split(',');
-      const ticker = cols[0];
-      const price = parseFloat(cols[1]);
-      const chg = parseFloat(cols[6]);
-      // Match ticker to company name
-      const map = {
-        'DANGCEM':'Dangote Cement','MTNN':'MTN Nigeria',
-        'ACCESSCORP':'Access Holdings','GTCO':'Guaranty Trust',
-        'BUACEMENT':'BUA Cement','STANBIC':'Stanbic IBTC',
-        'TRANSCORP':'Transcorp','ZENITHBANK':'Zenith Bank',
-        'AIRTELAFRI':'Airtel Africa','AFRIPRUD':'Africa Prudential',
-        'MCNICHOLS':'McNichols','LIVINGTRUST':'Livingtrust Mortgage',
-        'UBA':'UBA','SEPLAT':'Seplat'
-      };
-      const name = map[ticker];
-      if(name){
-        const c = COMPANIES.find(co=>co.name===name);
-        if(c){ c.price=price; c.chg=chg; }
+      const ticker  = cols[0]?.trim();
+      const price   = parseFloat(cols[1]);
+      const open    = parseFloat(cols[2]);
+      const high    = parseFloat(cols[3]);
+      const low     = parseFloat(cols[4]);
+      const chgPct  = parseFloat(cols[6]);
+      const volume  = parseFloat(cols[7]) || 0;
+      const info = NGX_MAP[ticker];
+      if(info && !isNaN(price) && price > 0){
+        csvStocks.push({
+          name:   info.name,
+          sector: info.sector,
+          ticker,
+          price,
+          open:   isNaN(open)   ? price : open,
+          high:   isNaN(high)   ? price : high,
+          low:    isNaN(low)    ? price : low,
+          chg:    isNaN(chgPct) ? 0     : chgPct,
+          volume,
+        });
       }
     });
+    if(csvStocks.length > 0){
+      COMPANIES = csvStocks;
+      const now = new Date();
+      document.getElementById('data-freshness').textContent =
+        '● Updated ' + now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    }
   } catch(e){
-    console.warn('Using fallback prices:', e);
+    console.warn('Using fallback NGX prices:', e);
   }
-  // Render with whatever prices we have
+  // Render with whatever prices we have (live CSV or fallback)
   document.getElementById('stock-list').innerHTML=COMPANIES.map(c=>`
     <div class="stock-row" onclick="showStockDetail('${c.name.replace(/'/g,"\\'")}')">
       <div><div class="stock-name">${c.name}</div><div class="stock-sector">${c.sector}</div></div>
@@ -760,10 +847,10 @@ function showStockDetail(name){
   document.getElementById('detail-sector').textContent=s.sector;
   document.getElementById('detail-price').textContent='₦'+s.price.toFixed(2);
   document.getElementById('detail-change').innerHTML=`<span class="${s.chg>=0?'green':'red'}">${s.chg>=0?'+':''}${s.chg}% today</span>`;
-  document.getElementById('detail-high').textContent='₦'+(s.price*1.18).toFixed(2);
-  document.getElementById('detail-low').textContent='₦'+(s.price*0.75).toFixed(2);
-  document.getElementById('detail-vol').textContent=(Math.random()*5+0.5).toFixed(1)+'M';
-  document.getElementById('detail-cap').textContent='₦'+(s.price*(Math.random()*800+200)).toFixed(0)+'M';
+  document.getElementById('detail-high').textContent= s.high>0 ? '₦'+s.high.toFixed(2) : '—';
+  document.getElementById('detail-low').textContent=  s.low>0  ? '₦'+s.low.toFixed(2)  : '—';
+  document.getElementById('detail-vol').textContent=  s.volume>0 ? (s.volume/1e6).toFixed(2)+'M' : '—';
+  document.getElementById('detail-cap').textContent=  s.open>0  ? '₦'+s.open.toFixed(2) : '—';
 
   if(stockChartInst){stockChartInst.destroy();stockChartInst=null;}
   const canvas=document.getElementById('stockChart');
@@ -857,7 +944,7 @@ document.getElementById('search-input').addEventListener('input',function(){
   const q=this.value.toLowerCase();
   const results=document.getElementById('search-results');
   if(!q){results.style.display='none';return;}
-  const matches=COMPANIES.filter(c=>c.name.toLowerCase().includes(q));
+  const matches=COMPANIES.filter(c=>c.name.toLowerCase().includes(q)||c.sector.toLowerCase().includes(q)||(c.ticker&&c.ticker.toLowerCase().includes(q)));
   if(!matches.length){results.style.display='none';return;}
   results.style.display='block';
   results.innerHTML=matches.map(c=>`
@@ -966,6 +1053,41 @@ function checkAlerts(){
   renderAlerts();
 }
 
+// ===================== NEWS =====================
+async function loadNews(){
+  try {
+    const rssUrl='https://feeds.bbci.co.uk/news/world/africa/rss.xml';
+    const proxyUrl=`https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`;
+    const res=await fetch(proxyUrl);
+    if(!res.ok) throw new Error('RSS '+res.status);
+    const text=await res.text();
+    const parser=new DOMParser();
+    const doc=parser.parseFromString(text,'application/xml');
+    const items=Array.from(doc.querySelectorAll('item')).slice(0,6);
+    if(!items.length) throw new Error('No items');
+    document.getElementById('news-list').innerHTML=items.map(item=>{
+      const title=item.querySelector('title')?.textContent||'';
+      const pubDate=item.querySelector('pubDate')?.textContent||'';
+      const link=item.querySelector('link')?.textContent||'#';
+      const date=pubDate?new Date(pubDate).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}):'';
+      return `<div class="news-card" onclick="window.open('${link}','_blank')" style="cursor:pointer">
+        <div class="news-time">${date}</div>
+        <div class="news-headline">${title}</div>
+        <div class="news-source">BBC AFRICA ↗</div>
+      </div>`;
+    }).join('');
+  } catch(e){
+    console.warn('News error:',e);
+    document.getElementById('news-list').innerHTML=`
+      <div class="news-card">
+        <div class="news-headline">Visit BBC Africa for the latest market and business news</div>
+        <div class="news-source" style="margin-top:6px">
+          <a href="https://www.bbc.com/news/world/africa" target="_blank" style="color:#00d4aa;text-decoration:none">bbc.com/news/world/africa ↗</a>
+        </div>
+      </div>`;
+  }
+}
+
 // ===================== INDEX CHART =====================
 function drawIndexChart(){
   const canvas=document.getElementById('indexChart');
@@ -975,13 +1097,13 @@ function drawIndexChart(){
 }
 
 // ===================== INIT =====================
-loadStocks();
+loadStocks().then(()=>loadAfricanExchanges()); // load exchanges after stocks so NGX tab is consistent
 drawIndexChart();
 loadFX();
 loadCrypto();
 loadCommodities();
 loadMacro();
-loadAfricanExchanges();
+loadNews();
 renderPortfolio();
 renderAlerts();
 setInterval(loadFX,60000);

@@ -117,9 +117,13 @@ for exchange_name, url in exchanges.items():
             for row in rows:
                 cols = row.find_all("td")
                 if len(cols) >= 3:
+                    company = cols[0].get_text(strip=True)
+                    # Skip header rows that got scraped as data rows
+                    if company in ("Company", "Name", ""):
+                        continue
                     companies.append({
                         "Exchange": exchange_name,
-                        "Company": cols[0].get_text(strip=True),
+                        "Company": company,
                         "Sector": cols[1].get_text(strip=True),
                         "Price": cols[2].get_text(strip=True)
                     })
@@ -173,8 +177,8 @@ for country_code, country_name in countries.items():
                     "Value": round(value, 2),
                     "Year": year
                 })
-        except:
-            pass
+        except Exception as e:
+            print(f"  ⚠️ {country_code}/{indicator_code}: {e}")
 
 if macro_rows:
     df_macro = pd.DataFrame(macro_rows)
