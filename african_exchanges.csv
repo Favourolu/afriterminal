@@ -1,5 +1,4 @@
 Exchange,Company,Sector,Price
-Ghana (GSE),Company,Sector,Price
 Ghana (GSE),Aluworks,Basic Materials,0.10
 Ghana (GSE),Benso Oil Palm Plantation,Consumer Goods,79.00
 Ghana (GSE),CAL Bank,Financials,0.88
@@ -49,41 +48,6 @@ Ghana (GSE),Ghana Oil,6.60,"756,136"
 Ghana (GSE),GCB Bank,52.00,"154,831"
 Ghana (GSE),CAL Bank,0.88,"127,625"
 Ghana (GSE),SIC Insurance,5.98,"109,304"
-Ghana (GSE),,BRVM-CI,416.46
-Ghana (GSE),,BSE DCI,"10,995.42"
-Ghana (GSE),,DSE ASI,"3,878.16"
-Ghana (GSE),,EGX 30,"47,772.74"
-Ghana (GSE),,GSE-CI,"15,185.49"
-Ghana (GSE),,JSE ASI,"116,785.77"
-Ghana (GSE),,LuSE ASI,"26,983.49"
-Ghana (GSE),,MASI,"16,902.46"
-Ghana (GSE),,MSE ASI,"577,608.68"
-Ghana (GSE),,NGX ASI,"196,066.11"
-Ghana (GSE),,NSE ASI,206.80
-Ghana (GSE),,NSX OI,"2,141.90"
-Ghana (GSE),,RSE ASI,187.55
-Ghana (GSE),,SEM ASI,"2,015.74"
-Ghana (GSE),,TUNINDEX,"14,877.24"
-Ghana (GSE),,USE ASI,"1,978.99"
-Ghana (GSE),,ZSE ASI,359.49
-Kenya (NSE),,BRVM-CI,416.46
-Kenya (NSE),,BSE DCI,"10,995.42"
-Kenya (NSE),,DSE ASI,"3,878.16"
-Kenya (NSE),,EGX 30,"47,772.74"
-Kenya (NSE),,GSE-CI,"15,185.49"
-Kenya (NSE),,JSE ASI,"116,785.77"
-Kenya (NSE),,LuSE ASI,"26,983.49"
-Kenya (NSE),,MASI,"16,902.46"
-Kenya (NSE),,MSE ASI,"577,608.68"
-Kenya (NSE),,NGX ASI,"196,066.11"
-Kenya (NSE),,NSE ASI,206.80
-Kenya (NSE),,NSX OI,"2,141.90"
-Kenya (NSE),,RSE ASI,187.55
-Kenya (NSE),,SEM ASI,"2,015.74"
-Kenya (NSE),,TUNINDEX,"14,877.24"
-Kenya (NSE),,USE ASI,"1,978.99"
-Kenya (NSE),,ZSE ASI,359.49
-Egypt (EGX),Company,Sector,Price
 Egypt (EGX),Abu Qir Fertilizers,Basic Materials,79.90
 Egypt (EGX),Abu Dhabi Islamic Bank Egypt,Financials,38.97
 Egypt (EGX),Acrow Misr,Industrials,127.52
@@ -383,20 +347,3 @@ Egypt (EGX),Qalaa Holdings,3.61,"96,468,998"
 Egypt (EGX),Dice Sport & Casual Wear,1.85,"62,700,594"
 Egypt (EGX),Orascom Investment Holding,1.22,"51,038,743"
 Egypt (EGX),Beltone Financial Holding,2.96,"45,794,365"
-Egypt (EGX),,BRVM-CI,416.46
-Egypt (EGX),,BSE DCI,"10,995.42"
-Egypt (EGX),,DSE ASI,"3,878.16"
-Egypt (EGX),,EGX 30,"47,772.74"
-Egypt (EGX),,GSE-CI,"15,185.49"
-Egypt (EGX),,JSE ASI,"116,785.77"
-Egypt (EGX),,LuSE ASI,"26,983.49"
-Egypt (EGX),,MASI,"16,902.46"
-Egypt (EGX),,MSE ASI,"577,608.68"
-Egypt (EGX),,NGX ASI,"196,066.11"
-Egypt (EGX),,NSE ASI,206.80
-Egypt (EGX),,NSX OI,"2,141.90"
-Egypt (EGX),,RSE ASI,187.55
-Egypt (EGX),,SEM ASI,"2,015.74"
-Egypt (EGX),,TUNINDEX,"14,877.24"
-Egypt (EGX),,USE ASI,"1,978.99"
-Egypt (EGX),,ZSE ASI,359.49
