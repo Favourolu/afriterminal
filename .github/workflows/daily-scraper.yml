@@ -1,9 +1,10 @@
-name: Daily NGX Data Update
+name: Daily AfriTerminal Data Update
 
 on:
   schedule:
-    - cron: '0 7 * * 1-5'  # 8am Lagos time, weekdays only
-  workflow_dispatch:  # allows manual trigger too
+    - cron: '0 14 * * 1-5'  # 2pm UTC = 3pm WAT, weekdays only
+    - cron: '30 14 * * 1-5' # 2:30pm UTC = 3:30pm WAT backup run
+  workflow_dispatch: # allows manual trigger too
 
 jobs:
   scrape:
@@ -20,16 +21,21 @@ jobs:
       - name: Install dependencies
         run: pip install requests beautifulsoup4 pandas lxml
 
-      - name: Run NGX scraper
-        run: python scraper.py
+      - name: Run NGX live scraper
+        env:
+          ITICK_API_KEY: ${{ secrets.ITICK_API_KEY }}
+        run: python ngx_live_scraper.py
 
       - name: Run FX scraper
         run: python fx_scraper.py
+
+      - name: Run mega scraper
+        run: python mega_scraper.py
 
       - name: Commit and push new data
         run: |
           git config --global user.email "afriterminal@auto.com"
           git config --global user.name "AfriTerminal Bot"
           git add *.csv
-          git diff --staged --quiet || git commit -m "Auto update: NGX + FX data $(date '+%Y-%m-%d')"
+          git diff --staged --quiet || git commit -m "Auto update: $(date '+%Y-%m-%d %H:%M') WAT"
           git push
