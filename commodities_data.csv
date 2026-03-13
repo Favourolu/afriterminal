@@ -1,6 +1,6 @@
 Commodity,Ticker,Price,Unit,24h Change %
-Brent Crude Oil,BZ=F,100.87,USD/barrel,0.41
-Gold,GC=F,5050.4,USD/oz,-1.47
-Cocoa,CC=F,3360.0,USD/tonne,4.25
-Natural Gas,NG=F,3.16,USD/MMBtu,-2.2
+Brent Crude Oil,BZ=F,101.62,USD/barrel,1.15
+Gold,GC=F,5052.1,USD/oz,-1.44
+Cocoa,CC=F,3292.0,USD/tonne,-0.69
+Natural Gas,NG=F,3.12,USD/MMBtu,-3.53
 Wheat,W=F,534.5,USD/bushel,1.14
